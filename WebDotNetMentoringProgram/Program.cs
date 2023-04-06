@@ -1,4 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WebDotNetMentoringProgram.Data;
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<WebDotNetMentoringProgramContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebDotNetMentoringProgramContext") ?? throw new InvalidOperationException("Connection string 'WebDotNetMentoringProgramContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
