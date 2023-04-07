@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
+using WebDotNetMentoringProgram.ViewModels;
 
 namespace WebDotNetMentoringProgram.Controllers
 {
@@ -22,9 +23,27 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'WebDotNetMentoringProgramContext.Product'  is null.");
+            var _productTableViewModels = (from product in _context.Products
+                           join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
+                           join category in _context.Categories on product.CategoryID equals category.CategoryId
+                           select new ProductTableViewModel()
+                           {
+                               ProductID = product.ProductID, 
+                               ProductName = product.ProductName,
+                               CompanyName = supplier.CompanyName,
+                               CategoryName = category.CategoryName,
+                               QuantityPerUnit = product.QuantityPerUnit,
+                               UnitPrice = product.UnitPrice,
+                               UnitsInStock = product.UnitsInStock,
+                               UnitsOnOrder = product.UnitsOnOrder,
+                               ReorderLevel = product.ReorderLevel,
+                               Discontinued = product.Discontinued
+
+                           }).ToList();
+
+            return View(_productTableViewModels);
+
+            //return Problem("Entity set 'WebDotNetMentoringProgramContext' .Product OR .Categories OR .Suppliers are null.");
         }
 
         // GET: Products/Details/5

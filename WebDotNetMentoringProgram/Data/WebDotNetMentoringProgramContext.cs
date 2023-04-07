@@ -17,5 +17,7 @@ namespace WebDotNetMentoringProgram.Data
         public DbSet<WebDotNetMentoringProgram.Models.Product> Products { get; set; } = default!;
 
         public DbSet<WebDotNetMentoringProgram.Models.Category>? Categories { get; set; }
+
+        public DbSet<WebDotNetMentoringProgram.Models.Supplier>? Suppliers { get; set; }
     }
 }
