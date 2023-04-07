@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
@@ -23,27 +18,38 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var _productTableViewModels = (from product in _context.Products
-                           join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
-                           join category in _context.Categories on product.CategoryID equals category.CategoryId
-                           select new ProductTableViewModel()
-                           {
-                               ProductID = product.ProductID, 
-                               ProductName = product.ProductName,
-                               CompanyName = supplier.CompanyName,
-                               CategoryName = category.CategoryName,
-                               QuantityPerUnit = product.QuantityPerUnit,
-                               UnitPrice = product.UnitPrice,
-                               UnitsInStock = product.UnitsInStock,
-                               UnitsOnOrder = product.UnitsOnOrder,
-                               ReorderLevel = product.ReorderLevel,
-                               Discontinued = product.Discontinued
+            int _numberOfProductsToShow = 0;
 
-                           }).ToList();
+            if (Int32.TryParse(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().
+                GetSection("CustomSettings")["NumberOfProductsToShow"], out _numberOfProductsToShow))
+            {
+                if (_numberOfProductsToShow == 0)
+                    _numberOfProductsToShow = await _context.Products.CountAsync();
 
-            return View(_productTableViewModels);
+                var _productTableViewModels = await (from product in _context.Products
+                                                     join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
+                                                     join category in _context.Categories on product.CategoryID equals category.CategoryId
+                                                     select new ProductTableViewModel()
+                                                     {
+                                                         ProductID = product.ProductID,
+                                                         ProductName = product.ProductName,
+                                                         CompanyName = supplier.CompanyName,
+                                                         CategoryName = category.CategoryName,
+                                                         QuantityPerUnit = product.QuantityPerUnit,
+                                                         UnitPrice = product.UnitPrice,
+                                                         UnitsInStock = product.UnitsInStock,
+                                                         UnitsOnOrder = product.UnitsOnOrder,
+                                                         ReorderLevel = product.ReorderLevel,
+                                                         Discontinued = product.Discontinued
 
-            //return Problem("Entity set 'WebDotNetMentoringProgramContext' .Product OR .Categories OR .Suppliers are null.");
+                                                     }).Take(_numberOfProductsToShow).ToListAsync();
+
+                return View(_productTableViewModels);
+            }
+            else
+            {
+                throw new Exception("Undefined or non existing 'NumberOfProductsToShow' parameter!");
+            }
         }
 
         // GET: Products/Details/5
