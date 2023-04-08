@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
@@ -26,25 +28,9 @@ namespace WebDotNetMentoringProgram.Controllers
                 if (_numberOfProductsToShow == 0)
                     _numberOfProductsToShow = await _context.Products.CountAsync();
 
-                var _productTableViewModels = await (from product in _context.Products
-                                                     join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
-                                                     join category in _context.Categories on product.CategoryID equals category.CategoryId
-                                                     select new ProductTableViewModel()
-                                                     {
-                                                         ProductID = product.ProductID,
-                                                         ProductName = product.ProductName,
-                                                         CompanyName = supplier.CompanyName,
-                                                         CategoryName = category.CategoryName,
-                                                         QuantityPerUnit = product.QuantityPerUnit,
-                                                         UnitPrice = product.UnitPrice,
-                                                         UnitsInStock = product.UnitsInStock,
-                                                         UnitsOnOrder = product.UnitsOnOrder,
-                                                         ReorderLevel = product.ReorderLevel,
-                                                         Discontinued = product.Discontinued
+                var _productTableViewModel = await ProductTableViewModel().Take(_numberOfProductsToShow).ToListAsync();
 
-                                                     }).Take(_numberOfProductsToShow).ToListAsync();
-
-                return View(_productTableViewModels);
+                return View(_productTableViewModel);
             }
             else
             {
@@ -55,13 +41,14 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id == null || ProductTableViewModel() == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await ProductTableViewModel()
                 .FirstOrDefaultAsync(m => m.ProductID == id);
+
             if (product == null)
             {
                 return NotFound();
@@ -93,19 +80,55 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Products == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var _productTableViewModel = await ProductTableViewModel().ToListAsync();
+
+            if (_productTableViewModel == null)
             {
                 return NotFound();
             }
-            return View(product);
+
+            var _product = (from product in _productTableViewModel
+                            where product.ProductID == id
+                            select product).FirstOrDefault();
+            if (_product == null)
+            {
+                return NotFound();
+            }
+
+            EditTableViewModel _editTableViewModel = new EditTableViewModel();
+
+            _editTableViewModel.Product = _product;
+
+            // SupplierList List<SelectListItem>
+            var _supplierList = await (from suppliers in _context.Suppliers
+                                                 select suppliers.CompanyName).ToListAsync();
+
+            _editTableViewModel.SupplierList = new List<SelectListItem>();
+
+            for (int i = 0; i < _supplierList.Count; i++)
+            {
+                _editTableViewModel.SupplierList.Add(new SelectListItem { Value = i.ToString(), Text = _supplierList[i] });
+            }
+
+            // CategoryList List<SelectListItem>
+            var _categoryList = await (from categories in _context.Categories
+                                                select categories.CategoryName).ToListAsync();
+
+            _editTableViewModel.CategoryList = new List<SelectListItem>();
+
+            for (int i = 0; i < _categoryList.Count; i++)
+            {
+                _editTableViewModel.CategoryList.Add(new SelectListItem { Value = i.ToString(), Text = _categoryList[i] });
+            }
+
+            return View(_editTableViewModel);
         }
 
         // POST: Products/Edit/5
@@ -183,6 +206,26 @@ namespace WebDotNetMentoringProgram.Controllers
         private bool ProductExists(int id)
         {
           return (_context.Products?.Any(e => e.ProductID == id)).GetValueOrDefault();
+        }
+     
+        private IQueryable<ProductTableViewModel> ProductTableViewModel()
+        {
+            return (from product in _context.Products
+                                               join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
+                                               join category in _context.Categories on product.CategoryID equals category.CategoryId
+                                               select new ProductTableViewModel()
+                                               {
+                                                   ProductID = product.ProductID,
+                                                   ProductName = product.ProductName,
+                                                   CompanyName = supplier.CompanyName,
+                                                   CategoryName = category.CategoryName,
+                                                   QuantityPerUnit = product.QuantityPerUnit,
+                                                   UnitPrice = product.UnitPrice,
+                                                   UnitsInStock = product.UnitsInStock,
+                                                   UnitsOnOrder = product.UnitsOnOrder,
+                                                   ReorderLevel = product.ReorderLevel,
+                                                   Discontinued = product.Discontinued
+                                               });
         }
     }
 }

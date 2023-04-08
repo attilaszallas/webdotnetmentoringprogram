@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebDotNetMentoringProgram.Data;
-using WebDotNetMentoringProgram.Models;
-
-namespace WebDotNetMentoringProgram.ViewModels
+﻿namespace WebDotNetMentoringProgram.ViewModels
 {
-	public class ProductTableViewModel
+    public class ProductTableViewModel
 	{
         public int ProductID { get; set; }
         public string? ProductName { get; set; }
