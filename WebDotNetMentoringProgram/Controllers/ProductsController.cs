@@ -83,32 +83,12 @@ namespace WebDotNetMentoringProgram.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             // SupplierList List<SelectListItem>
-            var _supplierIndexList = await (from suppliers in _context.Suppliers
-                                       select suppliers.SupplierID).ToListAsync();
-
-            var _supplierNameList = await (from suppliers in _context.Suppliers
+            ViewBag.CompanyName = await (from suppliers in _context.Suppliers
                                                  select suppliers.CompanyName).ToListAsync();
 
-            ViewBag.SupplierList = new List<SelectListItem>();
-
-            for (int i = 0; i < _supplierIndexList.Count; i++)
-            {
-                ViewBag.SupplierList.Add(new SelectListItem { Value = _supplierIndexList[i].ToString(), Text = _supplierNameList[i] });
-            }
-
             // CategoryList List<SelectListItem>
-            var _categoryIndexList = await (from categories in _context.Categories
-                                           select categories.CategoryId).ToListAsync();
-
-            var _categoryNameList = await (from categories in _context.Categories
+            ViewBag.CategoryName = await (from categories in _context.Categories
                                                 select categories.CategoryName).ToListAsync();
-
-            ViewBag.CategoryList = new List<SelectListItem>();
-
-            for (int i = 0; i < _categoryIndexList.Count; i++)
-            {
-                ViewBag.CategoryList.Add(new SelectListItem { Value = _categoryIndexList[i].ToString(), Text = _categoryNameList[i] });
-            }
 
             if (id == null)
             {
@@ -149,7 +129,7 @@ namespace WebDotNetMentoringProgram.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(CreateProductFromProductTableViewModel(product));
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -229,6 +209,31 @@ namespace WebDotNetMentoringProgram.Controllers
                                                    ReorderLevel = product.ReorderLevel,
                                                    Discontinued = product.Discontinued
                                                });
+        }
+
+        private Product CreateProductFromProductTableViewModel(ProductTableViewModel productTableViewModel)
+        {
+            var supplierSelected = (from supplier in _context.Suppliers 
+                                    where supplier.CompanyName == productTableViewModel.CompanyName
+                                    select supplier).FirstOrDefault();
+
+            var categorySelected = (from category in _context.Categories
+                                    where category.CategoryName == productTableViewModel.CategoryName
+                                    select category).FirstOrDefault();
+
+            return new Product()
+            {
+                ProductID = productTableViewModel.ProductID,
+                ProductName = productTableViewModel.ProductName,
+                SupplierID = supplierSelected.SupplierID,
+                CategoryID = categorySelected.CategoryId,
+                QuantityPerUnit = productTableViewModel.QuantityPerUnit,
+                UnitPrice = productTableViewModel.UnitPrice,
+                UnitsInStock = productTableViewModel.UnitsInStock,
+                UnitsOnOrder = productTableViewModel.UnitsOnOrder,
+                ReorderLevel = productTableViewModel.ReorderLevel,
+                Discontinued = productTableViewModel.Discontinued
+            };
         }
     }
 }

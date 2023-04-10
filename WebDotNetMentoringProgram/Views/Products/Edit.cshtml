@@ -20,12 +20,12 @@
             </div>
             <div class="form-group">
                 <label class="control-label">CompanyName</label>
-                @Html.DropDownList("CompanyName", @ViewBag.SupplierList, Model.CompanyName, new {@class = "form-control"})
+                @Html.DropDownListFor(Model => Model.CompanyName, new SelectList(ViewBag.CompanyName), new {@class = "form-control"})
                 <span asp-validation-for="CompanyName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label class="control-label">CategoryName</label>
-                @Html.DropDownList("CategoryName", @ViewBag.CategoryList, Model.CategoryName, new {@class = "form-control"})
+                @Html.DropDownListFor(Model => Model.CategoryName, new SelectList(ViewBag.CategoryName), new {@class = "form-control"})
                 <span asp-validation-for="CategoryName" class="text-danger"></span>
             </div>
             <div class="form-group">
