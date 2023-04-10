@@ -68,7 +68,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductID,ProductName,SupplierID,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -82,6 +82,34 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // SupplierList List<SelectListItem>
+            var _supplierIndexList = await (from suppliers in _context.Suppliers
+                                       select suppliers.SupplierID).ToListAsync();
+
+            var _supplierNameList = await (from suppliers in _context.Suppliers
+                                                 select suppliers.CompanyName).ToListAsync();
+
+            ViewBag.SupplierList = new List<SelectListItem>();
+
+            for (int i = 0; i < _supplierIndexList.Count; i++)
+            {
+                ViewBag.SupplierList.Add(new SelectListItem { Value = _supplierIndexList[i].ToString(), Text = _supplierNameList[i] });
+            }
+
+            // CategoryList List<SelectListItem>
+            var _categoryIndexList = await (from categories in _context.Categories
+                                           select categories.CategoryId).ToListAsync();
+
+            var _categoryNameList = await (from categories in _context.Categories
+                                                select categories.CategoryName).ToListAsync();
+
+            ViewBag.CategoryList = new List<SelectListItem>();
+
+            for (int i = 0; i < _categoryIndexList.Count; i++)
+            {
+                ViewBag.CategoryList.Add(new SelectListItem { Value = _categoryIndexList[i].ToString(), Text = _categoryNameList[i] });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -102,33 +130,7 @@ namespace WebDotNetMentoringProgram.Controllers
                 return NotFound();
             }
 
-            EditTableViewModel _editTableViewModel = new EditTableViewModel();
-
-            _editTableViewModel.Product = _product;
-
-            // SupplierList List<SelectListItem>
-            var _supplierList = await (from suppliers in _context.Suppliers
-                                                 select suppliers.CompanyName).ToListAsync();
-
-            _editTableViewModel.SupplierList = new List<SelectListItem>();
-
-            for (int i = 0; i < _supplierList.Count; i++)
-            {
-                _editTableViewModel.SupplierList.Add(new SelectListItem { Value = i.ToString(), Text = _supplierList[i] });
-            }
-
-            // CategoryList List<SelectListItem>
-            var _categoryList = await (from categories in _context.Categories
-                                                select categories.CategoryName).ToListAsync();
-
-            _editTableViewModel.CategoryList = new List<SelectListItem>();
-
-            for (int i = 0; i < _categoryList.Count; i++)
-            {
-                _editTableViewModel.CategoryList.Add(new SelectListItem { Value = i.ToString(), Text = _categoryList[i] });
-            }
-
-            return View(_editTableViewModel);
+            return View(_product);
         }
 
         // POST: Products/Edit/5
@@ -136,7 +138,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,CompanyName,CategoryName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] ProductTableViewModel product)
         {
             if (id != product.ProductID)
             {
@@ -163,6 +165,7 @@ namespace WebDotNetMentoringProgram.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(product);
         }
 
