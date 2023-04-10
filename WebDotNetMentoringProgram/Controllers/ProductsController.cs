@@ -138,7 +138,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductID,ProductName,CompanyName,CategoryName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] ProductTableViewModel product)
+        public async Task<IActionResult> Edit(int id, ProductTableViewModel product)
         {
             if (id != product.ProductID)
             {
