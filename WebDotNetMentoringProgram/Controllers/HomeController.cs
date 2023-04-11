@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using WebDotNetMentoringProgram.Models;
 
@@ -23,10 +25,31 @@ namespace WebDotNetMentoringProgram.Controllers
 			return View();
 		}
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult CustomError()
 		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>().Error;
+
+			string? ExceptionMessage = exceptionDetails.Message;
+			string? ExceptionStackTrace = exceptionDetails.StackTrace;
+
+			// Logging the unhandled exception as Error
+            _logger.LogError($"Unhandled exception occurred while processing your request. \n Message: {ExceptionMessage} \n StackTrace: {ExceptionStackTrace} ");
+
+			if (exceptionDetails != null)
+			{
+				return View(new CustomErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ThrownException = exceptionDetails });
+			}
+			else
+			{
+				return View();
+			}
 		}
 	}
 }
