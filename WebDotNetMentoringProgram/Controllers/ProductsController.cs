@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+// please remove unused references 
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
+            // move this as optional parameter for action method and don't read this from appsettings
             int _numberOfProductsToShow = 0;
 
             if (Int32.TryParse(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().
@@ -41,6 +43,8 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            // I suggest to return BadRequest when id is null
+            // this second check for whole ProcudtTable is not necessary here. You select all records so request performance is to long for product details
             if (id == null || ProductTableViewModel() == null)
             {
                 return NotFound();
@@ -82,6 +86,9 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            // please move this two ViewBags before return view
+            // it also make request performance longer
+
             // SupplierList List<SelectListItem>
             ViewBag.CompanyName = await (from suppliers in _context.Suppliers
                                                  select suppliers.CompanyName).ToListAsync();
@@ -90,11 +97,13 @@ namespace WebDotNetMentoringProgram.Controllers
             ViewBag.CategoryName = await (from categories in _context.Categories
                                                 select categories.CategoryName).ToListAsync();
 
+            // this id is not nullable so this condidtion never will be fulfilled
             if (id == null)
             {
                 return NotFound();
             }
 
+            // again for edit one product we don't need to check whole table 
             var _productTableViewModel = await ProductTableViewModel().ToListAsync();
 
             if (_productTableViewModel == null)
@@ -129,11 +138,13 @@ namespace WebDotNetMentoringProgram.Controllers
             {
                 try
                 {
+                    // move CreateProductFromProductTableViewModel method from method input and assign it to separate value it will be more helpfully for future debug of code for others devs
                     _context.Update(CreateProductFromProductTableViewModel(product));
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    // just throw exception with message without checking all products
                     if (!ProductExists(product.ProductID))
                     {
                         return NotFound();
@@ -152,6 +163,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            // same here return BadRequest when id is null without checking whole context
             if (id == null || _context.Products == null)
             {
                 return NotFound();
@@ -172,6 +184,8 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // please keep the same behaviour for all endpoint actions 
+            // one you check id and whole context here only context
             if (_context.Products == null)
             {
                 return Problem("Entity set 'WebDotNetMentoringProgramContext.Product'  is null.");
@@ -188,7 +202,8 @@ namespace WebDotNetMentoringProgram.Controllers
 
         private bool ProductExists(int id)
         {
-          return (_context.Products?.Any(e => e.ProductID == id)).GetValueOrDefault();
+            // this condition in Any is enough for check if product exists
+            return (_context.Products?.Any(e => e.ProductID == id)).GetValueOrDefault();
         }
      
         private IQueryable<ProductTableViewModel> ProductTableViewModel()

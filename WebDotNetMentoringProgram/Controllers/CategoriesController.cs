@@ -5,6 +5,9 @@ using WebDotNetMentoringProgram.Models;
 
 namespace WebDotNetMentoringProgram.Controllers
 {
+    // here is very similiar situation to improve like in ProductsController
+    // please change this controller with comments form there
+
     public class CategoriesController : Controller
     {
         private readonly WebDotNetMentoringProgramContext _context;
@@ -17,6 +20,8 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
+            // just read all categories etities form DB to variable and check if is null tehn return error or view
+            // the performance of this will be better because you as doing two select operations
               return _context.Categories != null ? 
                           View(await _context.Categories.ToListAsync()) :
                           Problem("Entity set 'WebDotNetMentoringProgramContext.Category'  is null.");

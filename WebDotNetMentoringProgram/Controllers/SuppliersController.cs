@@ -10,6 +10,9 @@ using WebDotNetMentoringProgram.Models;
 
 namespace WebDotNetMentoringProgram.Controllers
 {
+    // here is very similiar situation to improve like in ProductsController
+    // please change this controller with comments form there
+
     public class SuppliersController : Controller
     {
         private readonly WebDotNetMentoringProgramContext _context;
@@ -22,7 +25,8 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-              return _context.Suppliers != null ? 
+            // same situation to improvment like in CategoriesController
+            return _context.Suppliers != null ? 
                           View(await _context.Suppliers.ToListAsync()) :
                           Problem("Entity set 'WebDotNetMentoringProgramContext.Supplier'  is null.");
         }
