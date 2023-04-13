@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-// please remove unused references 
 using Microsoft.EntityFrameworkCore;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
@@ -18,7 +17,6 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products
         public async Task<IActionResult> Index(int _numberOfProductsToShow = 10)
-            // move this as optional parameter for action method and don't read this from appsettings
         {
             if (_numberOfProductsToShow == 0)
                 _numberOfProductsToShow = await _context.Products.CountAsync();
@@ -38,8 +36,6 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            // I suggest to return BadRequest when id is null
-            // this second check for whole ProcudtTable is not necessary here. You select all records so request performance is to long for product details
             if (id == null)
             {
                 return BadRequest();
@@ -83,11 +79,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            // please move this two ViewBags before return view
-            // it also make request performance longer
-            // this id is not nullable so this condidtion never will be fulfilled
-            // again for edit one product we don't need to check whole table 
-
+            // check if id is not null
             var _product = await (from product in _context.Products
                             where product.ProductID == id
                             select product).FirstOrDefaultAsync();
@@ -118,6 +110,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
         {
+            // if this two id are diffrent return badrequest
             if (id != productTableViewModel.ProductID)
             {
                 return NotFound();
@@ -125,11 +118,9 @@ namespace WebDotNetMentoringProgram.Controllers
 
             if (ModelState.IsValid)
             {
-                // move CreateProductFromProductTableViewModel method from method input and assign it to separate value it will be more helpfully for future debug of code for others devs
                 var product = CreateProductFromProductTableViewModel(productTableViewModel);
                 _context.Update(product);
                 await _context.SaveChangesAsync();
-                    // just throw exception with message without checking all products
                  
                 return RedirectToAction(nameof(Index));
             }
