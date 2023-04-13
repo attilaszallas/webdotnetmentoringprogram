@@ -79,6 +79,11 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
             // check if id is not null
             var _product = await (from product in _context.Products
                             where product.ProductID == id
@@ -90,7 +95,6 @@ namespace WebDotNetMentoringProgram.Controllers
             }
 
             var _productTableViewModel = CreateProductTableViewModelFromProduct(_product);
-
 
             // SupplierList List<SelectListItem>
             ViewBag.CompanyName = await (from suppliers in _context.Suppliers
@@ -113,7 +117,7 @@ namespace WebDotNetMentoringProgram.Controllers
             // if this two id are diffrent return badrequest
             if (id != productTableViewModel.ProductID)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -132,9 +136,9 @@ namespace WebDotNetMentoringProgram.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             // same here return BadRequest when id is null without checking whole context
-            if (id == null || _context.Products == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var product = await _context.Products
@@ -154,10 +158,11 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // please keep the same behaviour for all endpoint actions 
             // one you check id and whole context here only context
-            if (_context.Products == null)
+            if (id == null)
             {
-                return Problem("Entity set 'WebDotNetMentoringProgramContext.Product'  is null.");
+                return BadRequest();
             }
+
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {

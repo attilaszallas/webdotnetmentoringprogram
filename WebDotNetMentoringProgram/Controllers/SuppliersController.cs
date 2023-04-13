@@ -104,7 +104,7 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             if (id != supplier.SupplierID)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -141,9 +141,9 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Suppliers == null)
+            if (id == null)
             {
-                return Problem("Entity set 'WebDotNetMentoringProgramContext.Supplier'  is null.");
+                return BadRequest();
             }
 
             var supplier = await _context.Suppliers.FindAsync(id);

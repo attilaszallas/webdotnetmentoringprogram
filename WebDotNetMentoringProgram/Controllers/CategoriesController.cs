@@ -102,7 +102,7 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             if (id != category.CategoryId)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -139,9 +139,9 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Categories == null)
+            if (id == null)
             {
-                return Problem("Entity set 'WebDotNetMentoringProgramContext.Category'  is null.");
+                return BadRequest();
             }
 
             var category = await _context.Categories.FindAsync(id);
