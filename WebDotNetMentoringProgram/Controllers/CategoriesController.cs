@@ -20,9 +20,6 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            // just read all categories etities form DB to variable and check if is null tehn return error or view
-            // the performance of this will be better because you as doing two select operations
-
             var _categories = _context.Categories;
 
             if (_categories != null)
@@ -137,7 +134,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null)
             {

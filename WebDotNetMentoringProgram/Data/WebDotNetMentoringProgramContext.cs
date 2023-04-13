@@ -10,7 +10,6 @@ namespace WebDotNetMentoringProgram.Data
         {
         }
 
-        // please remove WebDotNetMentoringProgram.Models from DbSet
         public DbSet<Product> Products { get; set; } = default!;
 
         public DbSet<Category>? Categories { get; set; }

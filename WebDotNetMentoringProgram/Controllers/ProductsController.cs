@@ -77,14 +77,13 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
 
-            // check if id is not null
             var _product = await (from product in _context.Products
                             where product.ProductID == id
                             select product).FirstOrDefaultAsync();
@@ -114,7 +113,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
         {
-            // if this two id are diffrent return badrequest
             if (id != productTableViewModel.ProductID)
             {
                 return BadRequest();
