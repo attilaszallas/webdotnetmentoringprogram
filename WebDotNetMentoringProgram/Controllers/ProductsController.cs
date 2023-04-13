@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 // please remove unused references 
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
@@ -19,25 +17,22 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
-        {
+        public async Task<IActionResult> Index(int _numberOfProductsToShow = 10)
             // move this as optional parameter for action method and don't read this from appsettings
-            int _numberOfProductsToShow = 0;
+        {
+            if (_numberOfProductsToShow == 0)
+                _numberOfProductsToShow = await _context.Products.CountAsync();
 
-            if (Int32.TryParse(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().
-                GetSection("CustomSettings")["NumberOfProductsToShow"], out _numberOfProductsToShow))
+            var _productTableViewModel = new List<ProductTableViewModel>();
+
+            var _productsToShow = await _context.Products.Take(_numberOfProductsToShow).ToListAsync();
+
+            foreach (var product in _productsToShow)
             {
-                if (_numberOfProductsToShow == 0)
-                    _numberOfProductsToShow = await _context.Products.CountAsync();
-
-                var _productTableViewModel = await ProductTableViewModel().Take(_numberOfProductsToShow).ToListAsync();
-
-                return View(_productTableViewModel);
+                _productTableViewModel.Add(CreateProductTableViewModelFromProduct(product));
             }
-            else
-            {
-                throw new Exception("Undefined or non existing 'NumberOfProductsToShow' parameter!");
-            }
+
+            return View(_productTableViewModel);
         }
 
         // GET: Products/Details/5
@@ -45,12 +40,12 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // I suggest to return BadRequest when id is null
             // this second check for whole ProcudtTable is not necessary here. You select all records so request performance is to long for product details
-            if (id == null || ProductTableViewModel() == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var product = await ProductTableViewModel()
+            var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.ProductID == id);
 
             if (product == null)
@@ -58,7 +53,9 @@ namespace WebDotNetMentoringProgram.Controllers
                 return NotFound();
             }
 
-            return View(product);
+            var productTableView = CreateProductTableViewModelFromProduct(product);
+
+            return View(productTableView);
         }
 
         // GET: Products/Create
@@ -88,38 +85,30 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // please move this two ViewBags before return view
             // it also make request performance longer
-
-            // SupplierList List<SelectListItem>
-            ViewBag.CompanyName = await (from suppliers in _context.Suppliers
-                                                 select suppliers.CompanyName).ToListAsync();
-
-            // CategoryList List<SelectListItem>
-            ViewBag.CategoryName = await (from categories in _context.Categories
-                                                select categories.CategoryName).ToListAsync();
-
             // this id is not nullable so this condidtion never will be fulfilled
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             // again for edit one product we don't need to check whole table 
-            var _productTableViewModel = await ProductTableViewModel().ToListAsync();
 
-            if (_productTableViewModel == null)
-            {
-                return NotFound();
-            }
-
-            var _product = (from product in _productTableViewModel
+            var _product = await (from product in _context.Products
                             where product.ProductID == id
-                            select product).FirstOrDefault();
+                            select product).FirstOrDefaultAsync();
+
             if (_product == null)
             {
                 return NotFound();
             }
 
-            return View(_product);
+            var _productTableViewModel = CreateProductTableViewModelFromProduct(_product);
+
+
+            // SupplierList List<SelectListItem>
+            ViewBag.CompanyName = await (from suppliers in _context.Suppliers
+                                         select suppliers.CompanyName).ToListAsync();
+
+            // CategoryList List<SelectListItem>
+            ViewBag.CategoryName = await (from categories in _context.Categories
+                                          select categories.CategoryName).ToListAsync();
+
+            return View(_productTableViewModel);
         }
 
         // POST: Products/Edit/5
@@ -127,37 +116,25 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProductTableViewModel product)
+        public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
         {
-            if (id != product.ProductID)
+            if (id != productTableViewModel.ProductID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    // move CreateProductFromProductTableViewModel method from method input and assign it to separate value it will be more helpfully for future debug of code for others devs
-                    _context.Update(CreateProductFromProductTableViewModel(product));
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
+                // move CreateProductFromProductTableViewModel method from method input and assign it to separate value it will be more helpfully for future debug of code for others devs
+                var product = CreateProductFromProductTableViewModel(productTableViewModel);
+                _context.Update(product);
+                await _context.SaveChangesAsync();
                     // just throw exception with message without checking all products
-                    if (!ProductExists(product.ProductID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(product);
+            return View(productTableViewModel);
         }
 
         // GET: Products/Delete/5
@@ -200,30 +177,29 @@ namespace WebDotNetMentoringProgram.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private ProductTableViewModel CreateProductTableViewModelFromProduct(Product product)
         {
-            // this condition in Any is enough for check if product exists
-            return (_context.Products?.Any(e => e.ProductID == id)).GetValueOrDefault();
-        }
-     
-        private IQueryable<ProductTableViewModel> ProductTableViewModel()
-        {
-            return (from product in _context.Products
-                                               join supplier in _context.Suppliers on product.SupplierID equals supplier.SupplierID
-                                               join category in _context.Categories on product.CategoryID equals category.CategoryId
-                                               select new ProductTableViewModel()
-                                               {
-                                                   ProductID = product.ProductID,
-                                                   ProductName = product.ProductName,
-                                                   CompanyName = supplier.CompanyName,
-                                                   CategoryName = category.CategoryName,
-                                                   QuantityPerUnit = product.QuantityPerUnit,
-                                                   UnitPrice = product.UnitPrice,
-                                                   UnitsInStock = product.UnitsInStock,
-                                                   UnitsOnOrder = product.UnitsOnOrder,
-                                                   ReorderLevel = product.ReorderLevel,
-                                                   Discontinued = product.Discontinued
-                                               });
+            var supplierSelected = (from supplier in _context.Suppliers
+                                    where supplier.SupplierID == product.SupplierID
+                                    select supplier).FirstOrDefault();
+
+            var categorySelected = (from category in _context.Categories
+                                    where category.CategoryId == product.CategoryID
+                                    select category).FirstOrDefault();
+
+            return new ProductTableViewModel()
+            {
+                ProductID = product.ProductID,
+                ProductName = product.ProductName,
+                CompanyName = supplierSelected.CompanyName,
+                CategoryName = categorySelected.CategoryName,
+                QuantityPerUnit = product.QuantityPerUnit,
+                UnitPrice = product.UnitPrice,
+                UnitsInStock = product.UnitsInStock,
+                UnitsOnOrder = product.UnitsOnOrder,
+                ReorderLevel = product.ReorderLevel,
+                Discontinued = product.Discontinued
+            };
         }
 
         private Product CreateProductFromProductTableViewModel(ProductTableViewModel productTableViewModel)

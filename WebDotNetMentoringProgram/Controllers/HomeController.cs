@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using WebDotNetMentoringProgram.Models;
 
 namespace WebDotNetMentoringProgram.Controllers
 {
-	public class HomeController : Controller
+    public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
@@ -26,9 +21,16 @@ namespace WebDotNetMentoringProgram.Controllers
         public async Task<IActionResult> Index()
         {
             // same situation to improvment like in CategoriesController
-            return _context.Suppliers != null ? 
-                          View(await _context.Suppliers.ToListAsync()) :
-                          Problem("Entity set 'WebDotNetMentoringProgramContext.Supplier'  is null.");
+            var _suppliers = _context.Suppliers;
+
+            if (_suppliers != null)
+            {
+                return View(await _context.Suppliers.ToListAsync());
+            }
+            else
+            {
+                return Problem("Entity set 'WebDotNetMentoringProgramContext.Supplier'  is null.");
+            }
         }
 
         // GET: Suppliers/Details/5
@@ -37,13 +39,14 @@ namespace WebDotNetMentoringProgram.Controllers
             // Throw Test Exception
             // throw new Exception("Test exception");
 
-            if (id == null || _context.Suppliers == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var supplier = await _context.Suppliers
                 .FirstOrDefaultAsync(m => m.SupplierID == id);
+
             if (supplier == null)
             {
                 return NotFound();
@@ -77,16 +80,18 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Suppliers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Suppliers == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var supplier = await _context.Suppliers.FindAsync(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
+
             return View(supplier);
         }
 
@@ -104,22 +109,9 @@ namespace WebDotNetMentoringProgram.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(supplier);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SupplierExists(supplier.SupplierID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(supplier);
+                await _context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(supplier);
@@ -128,13 +120,14 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Suppliers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Suppliers == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var supplier = await _context.Suppliers
                 .FirstOrDefaultAsync(m => m.SupplierID == id);
+
             if (supplier == null)
             {
                 return NotFound();
@@ -152,7 +145,9 @@ namespace WebDotNetMentoringProgram.Controllers
             {
                 return Problem("Entity set 'WebDotNetMentoringProgramContext.Supplier'  is null.");
             }
+
             var supplier = await _context.Suppliers.FindAsync(id);
+
             if (supplier != null)
             {
                 _context.Suppliers.Remove(supplier);
@@ -160,11 +155,6 @@ namespace WebDotNetMentoringProgram.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SupplierExists(int id)
-        {
-          return (_context.Suppliers?.Any(e => e.SupplierID == id)).GetValueOrDefault();
         }
     }
 }

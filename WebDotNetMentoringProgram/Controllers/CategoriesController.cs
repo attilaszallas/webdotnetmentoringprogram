@@ -22,21 +22,30 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // just read all categories etities form DB to variable and check if is null tehn return error or view
             // the performance of this will be better because you as doing two select operations
-              return _context.Categories != null ? 
-                          View(await _context.Categories.ToListAsync()) :
-                          Problem("Entity set 'WebDotNetMentoringProgramContext.Category'  is null.");
+
+            var _categories = _context.Categories;
+
+            if (_categories != null)
+            {
+                return View(await _categories.ToListAsync());
+            }
+            else
+            { 
+                return Problem("Entity set 'WebDotNetMentoringProgramContext.Category'  is null.");
+            }
         }
 
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.CategoryId == id);
+
             if (category == null)
             {
                 return NotFound();
@@ -70,12 +79,13 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var category = await _context.Categories.FindAsync(id);
+
             if (category == null)
             {
                 return NotFound();
@@ -97,22 +107,9 @@ namespace WebDotNetMentoringProgram.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExists(category.CategoryId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(category);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -121,13 +118,14 @@ namespace WebDotNetMentoringProgram.Controllers
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Categories == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var category = await _context.Categories
                 .FirstOrDefaultAsync(m => m.CategoryId == id);
+
             if (category == null)
             {
                 return NotFound();
@@ -145,7 +143,9 @@ namespace WebDotNetMentoringProgram.Controllers
             {
                 return Problem("Entity set 'WebDotNetMentoringProgramContext.Category'  is null.");
             }
+
             var category = await _context.Categories.FindAsync(id);
+            
             if (category != null)
             {
                 _context.Categories.Remove(category);
@@ -153,11 +153,6 @@ namespace WebDotNetMentoringProgram.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoryExists(int id)
-        {
-          return (_context.Categories?.Any(e => e.CategoryId == id)).GetValueOrDefault();
         }
     }
 }
