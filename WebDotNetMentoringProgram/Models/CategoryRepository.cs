@@ -23,7 +23,7 @@ namespace WebDotNetMentoringProgram.Models
                     select category.CategoryName).ToList();
         }
 
-        public Category GetCategoryById(int id)
+        public Category GetCategoryById(int? id)
         {
             return (from category in _webDotNetMentoringProgramContext.Categories
                     where category.CategoryId == id

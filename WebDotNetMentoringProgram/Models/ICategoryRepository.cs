@@ -4,7 +4,7 @@
     {
         IEnumerable<Category> GetCategories();
         IEnumerable<string> GetCategoryNames();
-        Category GetCategoryById(int id);
+        Category GetCategoryById(int? id);
         Category GetCategoryByName(string name);
     }
 }

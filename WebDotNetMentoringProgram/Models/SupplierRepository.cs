@@ -23,7 +23,7 @@ namespace WebDotNetMentoringProgram.Models
                     select supplier.CompanyName).ToList();
         }
 
-        public Supplier GetSupplierById(int id)
+        public Supplier GetSupplierById(int? id)
         {
             return (from supplier in _webDotNetMentoringProgramContext.Suppliers
                     where supplier.SupplierID == id

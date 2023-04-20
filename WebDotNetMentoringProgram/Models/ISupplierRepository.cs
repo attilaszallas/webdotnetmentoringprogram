@@ -4,7 +4,7 @@
     {
         IEnumerable<Supplier> GetSuppliers();
         IEnumerable<string> GetSupplierNames();
-        Supplier GetSupplierById(int id);
+        Supplier GetSupplierById(int? id);
         Supplier GetSupplierByName(string name);
     }
 }

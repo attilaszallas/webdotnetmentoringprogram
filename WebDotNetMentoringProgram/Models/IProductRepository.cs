@@ -4,7 +4,7 @@
     {
         IEnumerable<Product> GetProducts();
         IEnumerable<string> GetProductNames();
-        Product GetProductById(int id);
+        Product GetProductById(int? id);
         Product GetProductByName(string name);
         int GetProductCount();
         IEnumerable<Product> GetProductsWithLimit(int limit);

@@ -23,7 +23,7 @@ namespace WebDotNetMentoringProgram.Models
                     select product.ProductName).ToList();
         }
 
-        public Product GetProductById(int id)
+        public Product GetProductById(int? id)
         {
             return (from product in _webDotNetMentoringProgramContext.Products
                     where product.ProductID == id
