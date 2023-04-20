@@ -6,9 +6,6 @@
 
 <h1>Categories</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary mb-2">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -29,11 +26,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Delete</a>
             </td>
         </tr>
 }

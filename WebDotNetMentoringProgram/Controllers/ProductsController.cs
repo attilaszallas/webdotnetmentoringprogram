@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
 
@@ -8,22 +6,26 @@ namespace WebDotNetMentoringProgram.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly WebDotNetMentoringProgramContext _context;
+        private IProductRepository _productRepository;
+        private ICategoryRepository _categoryRepository;
+        private ISupplierRepository _supplierRepository;
 
-        public ProductsController(WebDotNetMentoringProgramContext context)
+        public ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository, ISupplierRepository supplierRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _supplierRepository = supplierRepository;
         }
 
         // GET: Products
         public async Task<IActionResult> Index(int _numberOfProductsToShow = 10)
         {
             if (_numberOfProductsToShow == 0)
-                _numberOfProductsToShow = await _context.Products.CountAsync();
+                _numberOfProductsToShow = _productRepository.GetProductCount();
 
             var _productTableViewModel = new List<ProductTableViewModel>();
 
-            var _productsToShow = await _context.Products.Take(_numberOfProductsToShow).ToListAsync();
+            var _productsToShow = _productRepository.GetProductsWithLimit(_numberOfProductsToShow);
 
             foreach (var product in _productsToShow)
             {
@@ -34,15 +36,14 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return BadRequest();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductID == id);
+            var product = _productRepository.GetProductById(id);
 
             if (product == null)
             {
@@ -69,8 +70,7 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                _productRepository.Add(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -85,9 +85,7 @@ namespace WebDotNetMentoringProgram.Controllers
             }
 
             // check if id is not null
-            var _product = await (from product in _context.Products
-                            where product.ProductID == id
-                            select product).FirstOrDefaultAsync();
+            var _product = _productRepository.GetProductById(id);
 
             if (_product == null)
             {
@@ -97,12 +95,10 @@ namespace WebDotNetMentoringProgram.Controllers
             var _productTableViewModel = CreateProductTableViewModelFromProduct(_product);
 
             // SupplierList List<SelectListItem>
-            ViewBag.CompanyName = await (from suppliers in _context.Suppliers
-                                         select suppliers.CompanyName).ToListAsync();
+            ViewBag.CompanyNames = _supplierRepository.GetSupplierNames();
 
             // CategoryList List<SelectListItem>
-            ViewBag.CategoryName = await (from categories in _context.Categories
-                                          select categories.CategoryName).ToListAsync();
+            ViewBag.CategoryNames = _categoryRepository.GetCategoryNames();
 
             return View(_productTableViewModel);
         }
@@ -123,9 +119,8 @@ namespace WebDotNetMentoringProgram.Controllers
             if (ModelState.IsValid)
             {
                 var product = CreateProductFromProductTableViewModel(productTableViewModel);
-                _context.Update(product);
-                await _context.SaveChangesAsync();
-                 
+
+                _productRepository.Update(product);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -133,16 +128,14 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            // same here return BadRequest when id is null without checking whole context
             if (id == null)
             {
                 return BadRequest();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductID == id);
+            var product = _productRepository.GetProductById(id);
             if (product == null)
             {
                 return NotFound();
@@ -163,25 +156,19 @@ namespace WebDotNetMentoringProgram.Controllers
                 return BadRequest();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = _productRepository.GetProductById(id);
             if (product != null)
             {
-                _context.Products.Remove(product);
+                _productRepository.Remove(product);
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private ProductTableViewModel CreateProductTableViewModelFromProduct(Product product)
         {
-            var supplierSelected = (from supplier in _context.Suppliers
-                                    where supplier.SupplierID == product.SupplierID
-                                    select supplier).FirstOrDefault();
-
-            var categorySelected = (from category in _context.Categories
-                                    where category.CategoryId == product.CategoryID
-                                    select category).FirstOrDefault();
+            var supplierSelected = _supplierRepository.GetSupplierById(product.ProductID);
+            var categorySelected = _categoryRepository.GetCategoryById(product.CategoryID);
 
             return new ProductTableViewModel()
             {
@@ -200,13 +187,8 @@ namespace WebDotNetMentoringProgram.Controllers
 
         private Product CreateProductFromProductTableViewModel(ProductTableViewModel productTableViewModel)
         {
-            var supplierSelected = (from supplier in _context.Suppliers 
-                                    where supplier.CompanyName == productTableViewModel.CompanyName
-                                    select supplier).FirstOrDefault();
-
-            var categorySelected = (from category in _context.Categories
-                                    where category.CategoryName == productTableViewModel.CategoryName
-                                    select category).FirstOrDefault();
+            var supplierSelected = _supplierRepository.GetSupplierByName(productTableViewModel.CompanyName);
+            var categorySelected = _categoryRepository.GetCategoryByName(productTableViewModel.CategoryName);
 
             return new Product()
             {

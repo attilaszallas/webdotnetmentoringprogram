@@ -1,13 +1,16 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebDotNetMentoringProgram.Data;
+using WebDotNetMentoringProgram.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<WebDotNetMentoringProgramContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("WebDotNetMentoringProgramContext") ?? throw new InvalidOperationException("Connection string 'WebDotNetMentoringProgramContext' not found.")));
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
