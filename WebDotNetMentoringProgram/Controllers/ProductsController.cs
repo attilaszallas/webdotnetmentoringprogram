@@ -84,7 +84,6 @@ namespace WebDotNetMentoringProgram.Controllers
                 return BadRequest();
             }
 
-            // check if id is not null
             var _product = _productRepository.GetProductById(id);
 
             if (_product == null)
@@ -110,7 +109,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
         {
-            // if this two id are diffrent return badrequest
             if (id != productTableViewModel.ProductID)
             {
                 return BadRequest();
