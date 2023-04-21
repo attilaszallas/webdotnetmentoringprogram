@@ -15,5 +15,19 @@ namespace WebDotNetMentoringProgram.Models
         public short UnitsOnOrder { get; set; }
         public short ReorderLevel { get; set; }
         public bool Discontinued { get; set; }
-	}
+
+        public Product (int productID, string? productName, int supplierID, int categoryID, string? quantityPerUnit, decimal unitPrice, short unitsInStock, short unitsOnOrder, short reorderLevel, bool discontinued)
+        {
+            ProductID = productID;
+            ProductName = productName;
+            SupplierID = supplierID;
+            CategoryID = categoryID;
+            QuantityPerUnit = quantityPerUnit;
+            UnitPrice = unitPrice;
+            UnitsInStock = unitsInStock;
+            UnitsOnOrder = unitsOnOrder;
+            ReorderLevel = reorderLevel;
+            Discontinued = discontinued;
+        }
+    }
 }

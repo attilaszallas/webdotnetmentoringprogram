@@ -188,19 +188,18 @@ namespace WebDotNetMentoringProgram.Controllers
             var supplierSelected = _supplierRepository.GetSupplierByName(productTableViewModel.CompanyName);
             var categorySelected = _categoryRepository.GetCategoryByName(productTableViewModel.CategoryName);
 
-            return new Product()
-            {
-                ProductID = productTableViewModel.ProductID,
-                ProductName = productTableViewModel.ProductName,
-                SupplierID = supplierSelected.SupplierID,
-                CategoryID = categorySelected.CategoryId,
-                QuantityPerUnit = productTableViewModel.QuantityPerUnit,
-                UnitPrice = productTableViewModel.UnitPrice,
-                UnitsInStock = productTableViewModel.UnitsInStock,
-                UnitsOnOrder = productTableViewModel.UnitsOnOrder,
-                ReorderLevel = productTableViewModel.ReorderLevel,
-                Discontinued = productTableViewModel.Discontinued
-            };
+            return new Product(
+                productTableViewModel.ProductID,
+                productTableViewModel.ProductName,
+                supplierSelected.SupplierID,
+                categorySelected.CategoryId,
+                productTableViewModel.QuantityPerUnit,
+                productTableViewModel.UnitPrice,
+                productTableViewModel.UnitsInStock,
+                productTableViewModel.UnitsOnOrder,
+                productTableViewModel.ReorderLevel,
+                productTableViewModel.Discontinued
+                ) {};
         }
     }
 }
