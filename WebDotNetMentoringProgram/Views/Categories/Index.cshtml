@@ -1,7 +1,7 @@
-﻿@model IEnumerable<WebDotNetMentoringProgram.Models.Category>
+﻿@model IEnumerable<WebDotNetMentoringProgram.ViewModels.CategoryViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Categories";
 }
 
 <h1>Categories</h1>
@@ -15,17 +15,26 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CategoryName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <!--td>
+                <a href="Categories/Image/@item.CategoryId"><img src="data:image/bmp;base64,@Html.DisplayFor(modelItem => item.Image)" /></a>
+            <td-->
+            <td>
+                <a asp-action="Image" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Change Image</a>
             </td>
         </tr>
 }

@@ -30,6 +30,11 @@ namespace WebDotNetMentoringProgram.Models
                     select category).FirstOrDefault();
         }
 
+        public void UpdateCategoryById(int? id, Category category)
+        {
+            _webDotNetMentoringProgramContext.Categories.Update(category);
+        }
+
         public Category GetCategoryByName(string name)
         {
             return (from category in _webDotNetMentoringProgramContext.Categories

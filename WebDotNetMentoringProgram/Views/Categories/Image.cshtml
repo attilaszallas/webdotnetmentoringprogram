@@ -1,0 +1,19 @@
+﻿@model WebDotNetMentoringProgram.ViewModels.ImageFileUpload
+
+@{
+    ViewData["Title"] = "Change Image";
+}
+
+<h1>Change Image</h1>
+
+<img src="data:image/bmp;base64,@ViewBag.Image" />
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dd>
+            <input asp-for="ImageFile" type="file">
+            <span asp-validation-for="ImageFile"></span>
+        </dd>
+    </dl>
+    <input asp-action="NewImage" asp-route-id="@ViewBag.Id" class="btn btn-primary" type="submit" value="Upload image" />
+</form>
