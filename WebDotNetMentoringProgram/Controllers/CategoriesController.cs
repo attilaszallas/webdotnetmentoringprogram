@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
 
@@ -31,10 +32,35 @@ namespace WebDotNetMentoringProgram.Controllers
             }
         }
 
-        // GET: Categories 
         [Route("Images/{id?}")]
         [Route("Categories/Image/{id?}")]
         public async Task<IActionResult> Image(int? id)
+        {
+            if (_categoryRepository != null)
+            {
+                var _categories = _categoryRepository.GetCategories();
+
+                var _categoryPicture = (from _category in _categories
+                                        where _category.CategoryId == id
+                                        select _category.Picture).FirstOrDefault();
+
+                var categoryPictureWithoutGarbage = RemoveGarbageBytes(_categoryPicture);
+                string imageBase64String = GetImageBase64String(categoryPictureWithoutGarbage);
+
+                ViewBag.Id = id;
+                ViewBag.Image = imageBase64String;
+
+                var image = ByteArrayToImage(categoryPictureWithoutGarbage);
+                return File(categoryPictureWithoutGarbage, "image/bmp"); ;
+            }
+            else
+            {
+                return Problem($"Entity set '{nameof(CategoryRepository)}' is null.");
+            }
+        }
+
+        [Route("Categories/ChangeImage/{id?}")]
+        public async Task<IActionResult> ChangeImage(int? id)
         {
             if (_categoryRepository != null)
             {
@@ -58,10 +84,9 @@ namespace WebDotNetMentoringProgram.Controllers
             }
         }
 
-        [Route("Images/{id?}")]
         [Route("Categories/Image/{id?}")]
         [HttpPost, ActionName("NewImage")]
-        public async Task<IActionResult> Image(int? id, ImageFileUpload imageFileUpload)
+        public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
         {
             var imageFile = imageFileUpload.ImageFile;
 
@@ -113,6 +138,15 @@ namespace WebDotNetMentoringProgram.Controllers
         private string GetImageBase64String(byte[] categoryPicture)
         {
             return Convert.ToBase64String(categoryPicture).ToString();
+        }
+
+        private Image ByteArrayToImage(byte[] bytes)
+        {
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                Image img = System.Drawing.Image.FromStream(stream);
+                return img;
+            }
         }
     }
 }

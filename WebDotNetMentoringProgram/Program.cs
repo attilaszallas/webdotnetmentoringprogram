@@ -37,11 +37,11 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
 app.Logger.LogInformation("Use Routing");
+app.UseRouting();
 
-app.UseAuthorization();
 app.Logger.LogInformation("Use Authorization");
+app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
@@ -53,5 +53,15 @@ string? configurationAllowedHosts = app.Configuration.GetSection("AllowedHosts")
 app.Logger.LogInformation("Application Startup", contentRootPath);
 app.Logger.LogInformation($"Additional information: application location - folder path: {contentRootPath}");
 app.Logger.LogInformation($"Additional information: current configuration values: {configurationAllowedHosts}");
+
+app.Use(async (context, next) =>
+{
+    await next.Invoke();
+
+    if (context.Response.ContentType == "image/bmp")
+    {
+        await context.Response.WriteAsync("image/bmp");
+    }
+});
 
 app.Run();

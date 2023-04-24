@@ -15,9 +15,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -34,7 +32,10 @@
                 <a href="Categories/Image/@item.CategoryId"><img src="data:image/bmp;base64,@Html.DisplayFor(modelItem => item.Image)" /></a>
             <td-->
             <td>
-                <a asp-action="Image" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Change Image</a>
+                <a asp-action="Image" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Show Image</a>
+            </td>
+            <td>
+                <a asp-action="ChangeImage" asp-route-id="@item.CategoryId" class="btn btn-secondary mb-2">Change Image</a>
             </td>
         </tr>
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using WebDotNetMentoringProgram.Models;
 
 namespace WebDotNetMentoringProgram.ViewModels
 {
