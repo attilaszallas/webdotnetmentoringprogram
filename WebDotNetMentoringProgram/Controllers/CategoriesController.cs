@@ -44,14 +44,14 @@ namespace WebDotNetMentoringProgram.Controllers
                                         where _category.CategoryId == id
                                         select _category.Picture).FirstOrDefault();
 
-                var categoryPictureWithoutGarbage = RemoveGarbageBytes(_categoryPicture);
-                string imageBase64String = GetImageBase64String(categoryPictureWithoutGarbage);
+                _categoryPicture = RemoveGarbageBytes(_categoryPicture);
+                string imageBase64String = GetImageBase64String(_categoryPicture);
 
                 ViewBag.Id = id;
                 ViewBag.Image = imageBase64String;
 
-                var image = ByteArrayToImage(categoryPictureWithoutGarbage);
-                return File(categoryPictureWithoutGarbage, "image/bmp"); ;
+                var image = ByteArrayToImage(_categoryPicture);
+                return File(_categoryPicture, "image/bmp"); ;
             }
             else
             {
@@ -70,8 +70,8 @@ namespace WebDotNetMentoringProgram.Controllers
                                         where _category.CategoryId == id
                                           select _category.Picture).FirstOrDefault();
 
-                var categoryPictureWithoutGarbage = RemoveGarbageBytes(_categoryPicture);
-                string imageBase64String = GetImageBase64String(categoryPictureWithoutGarbage);
+                _categoryPicture = RemoveGarbageBytes(_categoryPicture);
+                string imageBase64String = GetImageBase64String(_categoryPicture);
 
                 ViewBag.Id = id;
                 ViewBag.Image = imageBase64String;
@@ -109,6 +109,7 @@ namespace WebDotNetMentoringProgram.Controllers
             }
 
             _categoryToUpdate.Picture = bitmapImage;
+            _categoryRepository.UpdateCategoryById(_categoryToUpdate);
 
             string imageBase64String = GetImageBase64String(bitmapImage);
 
@@ -131,8 +132,15 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         private byte[] RemoveGarbageBytes(byte[] bytes)
-        { 
-            return bytes.Skip(78).ToArray();
+        {
+            if (bytes != null && bytes.Length == 10746) // the original Northwind database images have 10746 bytes
+            {
+                return bytes.Skip(78).ToArray();
+            }
+            else
+            {
+                return bytes;
+            }
         }
 
         private string GetImageBase64String(byte[] categoryPicture)

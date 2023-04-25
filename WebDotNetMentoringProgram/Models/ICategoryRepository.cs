@@ -5,7 +5,7 @@
         IEnumerable<Category> GetCategories();
         IEnumerable<string> GetCategoryNames();
         Category GetCategoryById(int? id);
-        void UpdateCategoryById(int? id, Category category);
+        void UpdateCategoryById(Category category);
         Category GetCategoryByName(string name);
     }
 }
