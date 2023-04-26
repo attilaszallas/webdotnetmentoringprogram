@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
+using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
 
@@ -15,6 +16,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Categories
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Index()
         {
             if (_categoryRepository != null)
@@ -34,6 +36,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         [Route("Images/{id?}")]
         [Route("Categories/Image/{id?}")]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Image(int? id)
         {
             if (_categoryRepository != null)
@@ -60,6 +63,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         [Route("Categories/ChangeImage/{id?}")]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> ChangeImage(int? id)
         {
             if (_categoryRepository != null)
@@ -86,6 +90,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         [Route("Categories/Image/{id?}")]
         [HttpPost, ActionName("NewImage")]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
         {
             var imageFile = imageFileUpload.ImageFile;

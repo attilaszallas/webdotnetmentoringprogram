@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebDotNetMentoringProgram.Data;
+using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,9 +16,13 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<LoggingResponseHeaderFilterService>();
+
+/* Serilog
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console()
     .WriteTo.File(builder.Configuration["Logging:LogFilePath"]));
+*/
 
 var app = builder.Build();
 app.Logger.LogInformation("Application build is ready.");
@@ -60,7 +65,11 @@ app.Use(async (context, next) =>
 
     if (context.Response.ContentType == "image/bmp")
     {
-        await context.Response.WriteAsync("image/bmp");
+        var contextRequestPath = context.Request.Path;
+
+        RouteData routetData = context.GetRouteData();
+
+        var routeValue = context.GetRouteValue;
     }
 });
 
