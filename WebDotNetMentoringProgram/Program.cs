@@ -61,10 +61,37 @@ app.Logger.LogInformation($"Additional information: current configuration values
 
 app.Use(async (context, next) =>
 {
-    await next.Invoke();
+    await next(context);
 
     if (context.Response.ContentType == "image/bmp")
     {
+        var originalBody = context.Response.Body;
+
+        try
+        {
+            byte[] bytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                context.Response.Body = memoryStream;
+
+                await next(context);
+
+                memoryStream.Position = 0;
+
+                bytes = memoryStream.ToArray();
+            }
+
+            using(var fileStream = new FileStream("C:\\Users\\kryst\\Desktop\\test.bmp", FileMode.Create, System.IO.FileAccess.Write))
+            {
+                fileStream.Write(bytes, 0, bytes.Length);
+            }
+
+        }
+        finally
+        {
+            context.Response.Body = originalBody;
+        }
+
         var contextRequestPath = context.Request.Path;
 
         RouteData routetData = context.GetRouteData();
