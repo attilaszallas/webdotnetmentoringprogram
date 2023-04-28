@@ -16,31 +16,62 @@
             if (context.Response.ContentType == "image/bmp")
             {
                 var contextRequestPath = context.Request.Path;
-                var originalBody = context.Response.Body;
 
-                try
+                var imageCacheFilePath = configuration["ImageFileCacheFolder"] + "\\" + contextRequestPath.Value.Replace("/", "") + ".bmp";
+
+                bool cacheFileShouldBeUsed = false;
+                if (File.Exists(imageCacheFilePath))
                 {
-                    byte[] bytes;
+                    TimeSpan ageOfFile = DateTime.Now - File.GetLastWriteTime(imageCacheFilePath);
 
-                    using (var memoryStream = new MemoryStream())
+                    int maxAgeOfFilesInDays;
+                    if (!int.TryParse(configuration["MaxAgeOfFilesInDays"], out maxAgeOfFilesInDays))
                     {
-                        context.Response.Body = memoryStream;
-
-                        //await _next(context);
-
-                        memoryStream.Position = 0;
-
-                        bytes = memoryStream.ToArray();
+                        throw new Exception("MaxAgeOfFilesInDays parameter is not an integer.");
                     }
 
-                    using (var fileStream = new FileStream(configuration["ImageFileCacheFolder"] + "\\" + contextRequestPath.Value.Replace("/","") + ".bmp", FileMode.Create, System.IO.FileAccess.Write))
+                    TimeSpan maxAgeOfFiles = new TimeSpan(maxAgeOfFilesInDays, 0, 0, 0);
+                    TimeSpan ageOfFilesInDays = DateTime.Now - File.GetLastWriteTime(imageCacheFilePath);
+
+                    if (ageOfFilesInDays < maxAgeOfFiles)
                     {
-                        fileStream.Write(bytes, 0, bytes.Length);
+                        cacheFileShouldBeUsed = true;
                     }
                 }
-                finally
+
+                if (cacheFileShouldBeUsed)
                 {
-                    context.Response.Body = originalBody;
+                    using FileStream fileStream = File.OpenRead(imageCacheFilePath);
+                    await fileStream.CopyToAsync(context.Response.Body);
+                }
+                else
+                {
+                    var originalBody = context.Response.Body;
+
+                    try
+                    {
+                        byte[] bytes;
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            context.Response.Body = memoryStream;
+
+                            //await _next(context);
+
+                            memoryStream.Position = 0;
+
+                            bytes = memoryStream.ToArray();
+                        }
+
+                        using (var fileStream = new FileStream(imageCacheFilePath, FileMode.Create, System.IO.FileAccess.Write))
+                        {
+                            fileStream.Write(bytes, 0, bytes.Length);
+                        }
+                    }
+                    finally
+                    {
+                        context.Response.Body = originalBody;
+                    }
                 }
             }
         }

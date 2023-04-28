@@ -54,7 +54,7 @@ namespace WebDotNetMentoringProgram.Controllers
                 ViewBag.Image = imageBase64String;
 
                 var image = ByteArrayToImage(_categoryPicture);
-                return File(_categoryPicture, "image/bmp"); ;
+                return File(_categoryPicture, "image/bmp");
             }
             else
             {
