@@ -1,5 +1,6 @@
 ﻿namespace WebDotNetMentoringProgram.Models
 {
+    // all interfaces and abstract class should be placed in folder abstractions 
     public interface ICategoryRepository
     {
         IEnumerable<Category> GetCategories();

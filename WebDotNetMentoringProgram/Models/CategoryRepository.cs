@@ -2,6 +2,7 @@
 
 namespace WebDotNetMentoringProgram.Models
 {
+    // repository classes should be placed in folder Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly WebDotNetMentoringProgramContext _webDotNetMentoringProgramContext;

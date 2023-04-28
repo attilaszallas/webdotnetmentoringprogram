@@ -41,7 +41,10 @@ namespace WebDotNetMentoringProgram.Controllers
 			// Logging the unhandled exception as Error
             _logger.LogError($"Unhandled exception occurred while processing your request. \n Message: {ExceptionMessage} \n StackTrace: {ExceptionStackTrace} ");
 
-			if (exceptionDetails != null)
+            // here is also better ternary conditional operator 
+            // basically when you want to return some value and it depends from some condition 
+            // better is use ternary conditional operator instead if-elase
+            if (exceptionDetails != null)
 			{
 				return View(new CustomErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ThrownException = exceptionDetails });
 			}

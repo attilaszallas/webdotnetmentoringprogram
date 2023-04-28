@@ -12,13 +12,19 @@ namespace WebDotNetMentoringProgram.Controllers
 
         public CategoriesController(ICategoryRepository categoryRepository)
         {
-            _categoryRepository = categoryRepository;
+            // instead of check if dependency is null in every action throw exception here in constructor like this
+            // this is good pattern for handle dependencies and not crash application for .NET6 it not crasj application
+            // please do this for all cobtrollers and dependencies
+            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(_categoryRepository));
         }
 
         // GET: Categories
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Index()
         {
+            // in future when you want to check some error condidtion do this at begining 
+            // in this case check if _categoryRepository is null and return Problem 
+            // then you can use if statment instead of if-else which looks better
             if (_categoryRepository != null)
             {
                 var _categories = _categoryRepository.GetCategories();
@@ -145,6 +151,8 @@ namespace WebDotNetMentoringProgram.Controllers
 
         private byte[] RemoveGarbageBytes(byte[] bytes)
         {
+            // here looks better to use ternary conditional operator
+            // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/conditional-operator
             if (bytes != null && bytes.Length == 10746) // the original Northwind database images have 10746 bytes
             {
                 return bytes.Skip(78).ToArray();
@@ -164,6 +172,7 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             using (MemoryStream stream = new MemoryStream(bytes))
             {
+                // my visual studio told me that Image.FromStream is only for windows platform can you check if can use something muli-platform? 
                 Image img = System.Drawing.Image.FromStream(stream);
                 return img;
             }

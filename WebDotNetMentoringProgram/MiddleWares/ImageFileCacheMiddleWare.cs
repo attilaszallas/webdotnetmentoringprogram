@@ -77,6 +77,7 @@
         }
     }
 
+    // if not used anywhere please remove
     public static class ImageFileCacheMiddleWareExtensions
     { 
         public static IApplicationBuilder UseImageFileCacheMiddleWare(this IApplicationBuilder builder)

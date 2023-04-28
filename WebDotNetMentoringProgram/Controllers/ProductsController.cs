@@ -41,6 +41,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Details(int id)
         {
+            // we need to set int id as nullable or remove this condition because it will never occure
             if (id == null)
             {
                 return BadRequest();
@@ -85,6 +86,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Edit(int id)
         {
+            // same here
             if (id == null)
             {
                 return BadRequest();
@@ -136,6 +138,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Delete(int id)
         {
+            // and here
             if (id == null)
             {
                 return BadRequest();
