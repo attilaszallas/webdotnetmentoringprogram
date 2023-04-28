@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 
 namespace WebDotNetMentoringProgram.Controllers
@@ -14,6 +15,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Suppliers
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Index()
         {
             var _suppliers = _supplierRepository;
@@ -24,7 +26,7 @@ namespace WebDotNetMentoringProgram.Controllers
             }
             else
             {
-                return Problem($"Entity set '{nameof(SupplierRepository)}'  is null.");
+                return Problem($"Entity set '{nameof(SupplierRepository)}' is null.");
             }
         }
     }

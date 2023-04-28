@@ -93,35 +93,42 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
         {
-            var imageFile = imageFileUpload.ImageFile;
-
-            //Getting file meta data
-            var fileName = Path.GetFullPath(imageFile.FileName);
-            var contentType = imageFile.ContentType;
-
-            var _categories = _categoryRepository.GetCategories();
-
-            var _categoryToUpdate = (from _category in _categories
-                                      where _category.CategoryId == id
-                                      select _category).FirstOrDefault();
-
-            byte[] bitmapImage;
-            using (var ms = new MemoryStream())
+            if ((imageFileUpload != null) && (imageFileUpload.ImageFile != null))
             {
-                imageFile.CopyTo(ms);
-                ms.Position = 0;
-                bitmapImage = ms.ToArray();
+                var imageFile = imageFileUpload.ImageFile;
+
+                //Getting file meta data
+                var fileName = Path.GetFullPath(imageFile.FileName);
+                var contentType = imageFile.ContentType;
+
+                var _categories = _categoryRepository.GetCategories();
+
+                var _categoryToUpdate = (from _category in _categories
+                                         where _category.CategoryId == id
+                                         select _category).FirstOrDefault();
+
+                byte[] bitmapImage;
+                using (var ms = new MemoryStream())
+                {
+                    imageFile.CopyTo(ms);
+                    ms.Position = 0;
+                    bitmapImage = ms.ToArray();
+                }
+
+                _categoryToUpdate.Picture = bitmapImage;
+                _categoryRepository.UpdateCategoryById(_categoryToUpdate);
+
+                string imageBase64String = GetImageBase64String(bitmapImage);
+
+                ViewBag.Id = id;
+                ViewBag.Image = imageBase64String;
+
+                return View();
             }
-
-            _categoryToUpdate.Picture = bitmapImage;
-            _categoryRepository.UpdateCategoryById(_categoryToUpdate);
-
-            string imageBase64String = GetImageBase64String(bitmapImage);
-
-            ViewBag.Id = id;
-            ViewBag.Image = imageBase64String;
-
-            return View();
+            else
+            { 
+                return Problem($"Entity set {nameof(ImageFileUpload)} or {nameof(ImageFileUpload.ImageFile)} is null.");
+            }
         }
 
         private CategoryViewModel CategoryToCategoryViewModel(Category category)

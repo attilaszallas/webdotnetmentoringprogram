@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
 
@@ -18,6 +19,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Index(int _numberOfProductsToShow = 10)
         {
             if (_numberOfProductsToShow == 0)
@@ -36,6 +38,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Details/5
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Details(int id)
         {
             if (id == null)
@@ -56,6 +59,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Create
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public IActionResult Create()
         {
             return View();
@@ -66,6 +70,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Create([Bind("ProductID,ProductName,SupplierID,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
         {
             if (ModelState.IsValid)
@@ -77,6 +82,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Edit/5
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
@@ -107,6 +113,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
         {
             if (id != productTableViewModel.ProductID)
@@ -126,6 +133,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Products/Delete/5
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -145,6 +153,7 @@ namespace WebDotNetMentoringProgram.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // please keep the same behaviour for all endpoint actions 
