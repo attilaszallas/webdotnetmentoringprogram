@@ -26,9 +26,10 @@ namespace WebDotNetMentoringProgram.Filters
             {
                 _logger.LogInformation(
                     $"- {nameof(LoggingResponseHeaderFilterService)}.{nameof(OnResultExecuting)}");
-
+                /*
                 context.HttpContext.Response.Headers.Add(
                     nameof(OnResultExecuting), nameof(LoggingResponseHeaderFilterService));
+                */
             }
         }
 
