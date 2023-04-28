@@ -38,7 +38,7 @@ namespace WebDotNetMentoringProgramTest.Mocks
 
         public int GetProductCount()
         {
-            throw new NotImplementedException();
+            return _repository.Count;
         }
 
         public IEnumerable<string> GetProductNames()
@@ -58,12 +58,10 @@ namespace WebDotNetMentoringProgramTest.Mocks
 
         public void Remove(Product product)
         {
-            throw new NotImplementedException();
         }
 
         public void Update(Product product)
         {
-            throw new NotImplementedException();
         }
     }
 }
