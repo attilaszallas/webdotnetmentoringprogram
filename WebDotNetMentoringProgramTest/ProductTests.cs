@@ -2,6 +2,7 @@
 using Moq;
 using WebDotNetMentoringProgram.Controllers;
 using WebDotNetMentoringProgram.Models;
+using WebDotNetMentoringProgram.ViewModels;
 using WebDotNetMentoringProgramTest.Mocks;
 
 namespace WebDotNetMentoringProgramTest
@@ -9,40 +10,109 @@ namespace WebDotNetMentoringProgramTest
     public class ProductTests
     {
         [Fact]
-        public void CreateNewProductTest()
+        public void Index_RequestOneProduct_ViewResult_Test()
         {
             // Arrange
-            var mockCategoryRepo = new Mock<ICategoryRepository>();
-            var mockProductRepo = new Mock<IProductRepository>();
-            var mockSupplierRepo = new Mock<ISupplierRepository>();
+            var productRepositoryMock = new Mock<IProductRepository>();
+            var categoryRepositoryMock = new Mock<ICategoryRepository>();
+            var supplierRepositoryMock = new Mock<ISupplierRepository>();
 
-            ProductRepositoryMock productRepositoryMock = new ProductRepositoryMock();
-
-            var controller = new ProductsController(productRepositoryMock, mockCategoryRepo.Object, mockSupplierRepo.Object);
+            ProductsController productsController = new ProductsController(productRepositoryMock.Object, categoryRepositoryMock.Object, supplierRepositoryMock.Object);
 
             // Act
-            Product productToAdd = new Product(223, "TestProduct", 1, 1, "1 box", 100, 1, 0, 0, false);
-
-            var result = controller.Create(productToAdd);
+            var result = productsController.Index(1).Result;
 
             // Assert
-            var viewResult = Assert.IsType<RedirectToActionResult>(result.Result);
+            Assert.IsType<ViewResult>(result);
         }
 
         [Fact]
-        public void EditExistingProductTest()
+        public void Details_IndexOutOfRangeInput_NotFoundResult_Test()
         {
-            ProductRepositoryMock productRepositoryMock = new ProductRepositoryMock();
+            // Arrange
+            var productRepositoryMock = new Mock<IProductRepository>();
+            var categoryRepositoryMock = new Mock<ICategoryRepository>();
+            var supplierRepositoryMock = new Mock<ISupplierRepository>();
 
-            // Edit Product id == 1
-            Product productToModify = productRepositoryMock.GetProductById(1);
+            ProductsController productsController = new ProductsController(productRepositoryMock.Object, categoryRepositoryMock.Object, supplierRepositoryMock.Object);
 
+            // Act
+            var result = productsController.Details(0).Result;
 
-            Product productToAdd = new Product(223, "TestProduct", 1, 1, "1 box", 100, 1, 0, 0, false);
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
 
-            productRepositoryMock.Add(productToAdd);
+        [Fact]
+        public void Details_IndexInRangeInput_ViewResult_Test()
+        {
+            // Arrange
+            var productRepositoryMock = new ProductRepositoryMock();
+            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var supplierRepositoryMock = new SupplierRepositoryMock();
 
-            Assert.True(productRepositoryMock.GetProductById(223).ProductName == "TestProduct");
+            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+
+            // Act
+            var result = productsController.Details(1).Result;
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public void Create_NewProduct_ValidModel_Test()
+        {
+            // Arrange
+            var productRepositoryMock = new ProductRepositoryMock();
+            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var supplierRepositoryMock = new SupplierRepositoryMock();
+
+            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+
+            // Act
+            var result = productsController.Create(new Product(1, "TestProduct", 1, 2, "", decimal.One, 1, 0, 0, false)).Result;
+
+            // Assert
+            Assert.IsType<RedirectToActionResult>(result);
+        }
+
+        [Fact]
+        public void Edit_ProductId1_ViewModel_Test()
+        {
+            // Arrange
+            var productRepositoryMock = new ProductRepositoryMock();
+            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var supplierRepositoryMock = new SupplierRepositoryMock();
+
+            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+
+            // Act
+            var result = productsController.Edit(1).Result;
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public void Edit_Product_ViewModel_Test()
+        {
+            // Arrange
+            var productRepositoryMock = new ProductRepositoryMock();
+            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var supplierRepositoryMock = new SupplierRepositoryMock();
+
+            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+
+            ProductTableViewModel productTableViewModel = new ProductTableViewModel();
+
+            productTableViewModel.ProductID = 1;
+
+            // Act
+            var result = productsController.Edit(1, productTableViewModel).Result;
+
+            // Assert
+            Assert.IsType<RedirectToActionResult>(result);
         }
     }
 }
