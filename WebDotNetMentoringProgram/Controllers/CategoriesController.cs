@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Drawing;
 using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
@@ -145,8 +144,10 @@ namespace WebDotNetMentoringProgram.Controllers
             using (MemoryStream stream = new MemoryStream(bytes))
             {
                 // my visual studio told me that Image.FromStream is only for windows platform can you check if can use something muli-platform? 
-                Image img = System.Drawing.Image.FromStream(stream);
-                return img;
+                using (Image img = SixLabors.ImageSharp.Image.Load(stream))
+                {
+                    return img;
+                }
             }
         }
     }
