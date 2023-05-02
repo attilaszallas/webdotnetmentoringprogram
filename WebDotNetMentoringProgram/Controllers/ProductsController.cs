@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
@@ -13,9 +14,9 @@ namespace WebDotNetMentoringProgram.Controllers
 
         public ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository, ISupplierRepository supplierRepository)
         {
-            _productRepository = productRepository;
-            _categoryRepository = categoryRepository;
-            _supplierRepository = supplierRepository;
+            _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+            _supplierRepository = supplierRepository ?? throw new ArgumentNullException(nameof(supplierRepository));
         }
 
         // GET: Products
@@ -39,7 +40,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Details/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
             // we need to set int id as nullable or remove this condition because it will never occure
             if (id == null)
@@ -84,7 +85,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Edit/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
             // same here
             if (id == null)
@@ -116,7 +117,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Edit(int id, ProductTableViewModel productTableViewModel)
+        public async Task<IActionResult> Edit(int? id, ProductTableViewModel productTableViewModel)
         {
             if (id != productTableViewModel.ProductID)
             {
@@ -136,7 +137,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Delete/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
             // and here
             if (id == null)
@@ -157,7 +158,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             // please keep the same behaviour for all endpoint actions 
             // one you check id and whole context here only context

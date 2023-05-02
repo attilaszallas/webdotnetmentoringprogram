@@ -1,4 +1,6 @@
-﻿namespace WebDotNetMentoringProgram.Models
+﻿using WebDotNetMentoringProgram.Models;
+
+namespace WebDotNetMentoringProgram.Abstractions
 {
     public interface ISupplierRepository
     {

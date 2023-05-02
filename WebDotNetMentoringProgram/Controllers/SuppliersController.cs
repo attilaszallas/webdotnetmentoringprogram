@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Filters;
-using WebDotNetMentoringProgram.Models;
+using WebDotNetMentoringProgram.Repositories;
 
 namespace WebDotNetMentoringProgram.Controllers
 {
@@ -11,7 +12,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         public SuppliersController(ISupplierRepository supplierRepository)
         {
-            _supplierRepository = supplierRepository;
+            _supplierRepository = supplierRepository ?? throw new ArgumentNullException(nameof(supplierRepository));
         }
 
         // GET: Suppliers
@@ -19,9 +20,7 @@ namespace WebDotNetMentoringProgram.Controllers
         public async Task<IActionResult> Index()
         {
             // not need to assign injected dependency to separate value 
-            var _suppliers = _supplierRepository;
-
-            if (_suppliers != null)
+            if (_supplierRepository != null)
             {
                 return View(_supplierRepository.GetSuppliers());
             }

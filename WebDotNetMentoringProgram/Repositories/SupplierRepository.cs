@@ -1,6 +1,8 @@
-﻿using WebDotNetMentoringProgram.Data;
+﻿using WebDotNetMentoringProgram.Abstractions;
+using WebDotNetMentoringProgram.Data;
+using WebDotNetMentoringProgram.Models;
 
-namespace WebDotNetMentoringProgram.Models
+namespace WebDotNetMentoringProgram.Repositories
 {
     public class SupplierRepository : ISupplierRepository
     {

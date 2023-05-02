@@ -1,8 +1,9 @@
-﻿using WebDotNetMentoringProgram.Data;
+﻿using WebDotNetMentoringProgram.Abstractions;
+using WebDotNetMentoringProgram.Data;
+using WebDotNetMentoringProgram.Models;
 
-namespace WebDotNetMentoringProgram.Models
+namespace WebDotNetMentoringProgram.Repositories
 {
-    // repository classes should be placed in folder Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly WebDotNetMentoringProgramContext _webDotNetMentoringProgramContext;
@@ -14,8 +15,8 @@ namespace WebDotNetMentoringProgram.Models
 
         public IEnumerable<Category> GetCategories()
         {
-                return (from category in _webDotNetMentoringProgramContext.Categories
-                        select category).ToList();
+            return (from category in _webDotNetMentoringProgramContext.Categories
+                    select category).ToList();
         }
 
         public IEnumerable<string> GetCategoryNames()

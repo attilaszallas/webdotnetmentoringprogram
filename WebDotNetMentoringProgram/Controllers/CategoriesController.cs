@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
@@ -15,7 +16,7 @@ namespace WebDotNetMentoringProgram.Controllers
             // instead of check if dependency is null in every action throw exception here in constructor like this
             // this is good pattern for handle dependencies and not crash application for .NET6 it not crasj application
             // please do this for all cobtrollers and dependencies
-            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(_categoryRepository));
+            _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
         }
 
         // GET: Categories
@@ -25,19 +26,12 @@ namespace WebDotNetMentoringProgram.Controllers
             // in future when you want to check some error condidtion do this at begining 
             // in this case check if _categoryRepository is null and return Problem 
             // then you can use if statment instead of if-else which looks better
-            if (_categoryRepository != null)
-            {
-                var _categories = _categoryRepository.GetCategories();
+            var _categories = _categoryRepository.GetCategories();
 
-                var _categoryViewModel = (from _category in _categories
-                 select CategoryToCategoryViewModel(_category)).ToList();
+            var _categoryViewModel = (from _category in _categories
+                select CategoryToCategoryViewModel(_category)).ToList();
 
-                return View(_categoryViewModel);
-            }
-            else
-            {
-                return Problem($"Entity set '{nameof(CategoryRepository)}' is null.");
-            }
+            return View(_categoryViewModel);
         }
 
         [Route("Images/{id?}")]
@@ -45,53 +39,39 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Image(int? id)
         {
-            if (_categoryRepository != null)
-            {
-                var _categories = _categoryRepository.GetCategories();
+            var _categories = _categoryRepository.GetCategories();
 
-                var _categoryPicture = (from _category in _categories
-                                        where _category.CategoryId == id
-                                        select _category.Picture).FirstOrDefault();
+            var _categoryPicture = (from _category in _categories
+                                    where _category.CategoryId == id
+                                    select _category.Picture).FirstOrDefault();
 
-                _categoryPicture = RemoveGarbageBytes(_categoryPicture);
-                string imageBase64String = GetImageBase64String(_categoryPicture);
+            _categoryPicture = RemoveGarbageBytes(_categoryPicture);
+            string imageBase64String = GetImageBase64String(_categoryPicture);
 
-                ViewBag.Id = id;
-                ViewBag.Image = imageBase64String;
+            ViewBag.Id = id;
+            ViewBag.Image = imageBase64String;
 
-                var image = ByteArrayToImage(_categoryPicture);
-                return File(_categoryPicture, "image/bmp");
-            }
-            else
-            {
-                return Problem($"Entity set '{nameof(CategoryRepository)}' is null.");
-            }
+            var image = ByteArrayToImage(_categoryPicture);
+            return File(_categoryPicture, "image/bmp");
         }
 
         [Route("Categories/ChangeImage/{id?}")]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> ChangeImage(int? id)
         {
-            if (_categoryRepository != null)
-            {
-                var _categories = _categoryRepository.GetCategories();
+            var _categories = _categoryRepository.GetCategories();
 
-                var _categoryPicture = (from _category in _categories
-                                        where _category.CategoryId == id
-                                          select _category.Picture).FirstOrDefault();
+            var _categoryPicture = (from _category in _categories
+                                    where _category.CategoryId == id
+                                        select _category.Picture).FirstOrDefault();
 
-                _categoryPicture = RemoveGarbageBytes(_categoryPicture);
-                string imageBase64String = GetImageBase64String(_categoryPicture);
+            _categoryPicture = RemoveGarbageBytes(_categoryPicture);
+            string imageBase64String = GetImageBase64String(_categoryPicture);
 
-                ViewBag.Id = id;
-                ViewBag.Image = imageBase64String;
+            ViewBag.Id = id;
+            ViewBag.Image = imageBase64String;
 
-                return View();
-            }
-            else
-            {
-                return Problem($"Entity set '{nameof(CategoryRepository)}' is null.");
-            }
+            return View();
         }
 
         [Route("Categories/Image/{id?}")]
@@ -99,42 +79,40 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
         {
-            if ((imageFileUpload != null) && (imageFileUpload.ImageFile != null))
+            if ((imageFileUpload == null) || (imageFileUpload.ImageFile == null))
             {
-                var imageFile = imageFileUpload.ImageFile;
-
-                //Getting file meta data
-                var fileName = Path.GetFullPath(imageFile.FileName);
-                var contentType = imageFile.ContentType;
-
-                var _categories = _categoryRepository.GetCategories();
-
-                var _categoryToUpdate = (from _category in _categories
-                                         where _category.CategoryId == id
-                                         select _category).FirstOrDefault();
-
-                byte[] bitmapImage;
-                using (var ms = new MemoryStream())
-                {
-                    imageFile.CopyTo(ms);
-                    ms.Position = 0;
-                    bitmapImage = ms.ToArray();
-                }
-
-                _categoryToUpdate.Picture = bitmapImage;
-                _categoryRepository.UpdateCategoryById(_categoryToUpdate);
-
-                string imageBase64String = GetImageBase64String(bitmapImage);
-
-                ViewBag.Id = id;
-                ViewBag.Image = imageBase64String;
-
-                return View();
-            }
-            else
-            { 
                 return Problem($"Entity set {nameof(ImageFileUpload)} or {nameof(ImageFileUpload.ImageFile)} is null.");
             }
+
+            var imageFile = imageFileUpload.ImageFile;
+
+            //Getting file meta data
+            var fileName = Path.GetFullPath(imageFile.FileName);
+            var contentType = imageFile.ContentType;
+
+            var _categories = _categoryRepository.GetCategories();
+
+            var _categoryToUpdate = (from _category in _categories
+                                        where _category.CategoryId == id
+                                        select _category).FirstOrDefault();
+
+            byte[] bitmapImage;
+            using (var ms = new MemoryStream())
+            {
+                imageFile.CopyTo(ms);
+                ms.Position = 0;
+                bitmapImage = ms.ToArray();
+            }
+
+            _categoryToUpdate.Picture = bitmapImage;
+            _categoryRepository.UpdateCategoryById(_categoryToUpdate);
+
+            string imageBase64String = GetImageBase64String(bitmapImage);
+
+            ViewBag.Id = id;
+            ViewBag.Image = imageBase64String;
+
+            return View();
         }
 
         private CategoryViewModel CategoryToCategoryViewModel(Category category)
@@ -153,14 +131,8 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // here looks better to use ternary conditional operator
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/conditional-operator
-            if (bytes != null && bytes.Length == 10746) // the original Northwind database images have 10746 bytes
-            {
-                return bytes.Skip(78).ToArray();
-            }
-            else
-            {
-                return bytes;
-            }
+            // the original Northwind database images have 10746 bytes
+            return (bytes != null && bytes.Length == 10746) ? bytes.Skip(78).ToArray() : bytes;
         }
 
         private string GetImageBase64String(byte[] categoryPicture)

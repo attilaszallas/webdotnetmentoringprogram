@@ -10,9 +10,9 @@ namespace WebDotNetMentoringProgram.Controllers
 		private readonly ILogger<HomeController> _logger;
 
 		public HomeController(ILogger<HomeController> logger)
-		{
-			_logger = logger;
-		}
+        {
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
 
 		public IActionResult Index()
 		{
@@ -44,14 +44,8 @@ namespace WebDotNetMentoringProgram.Controllers
             // here is also better ternary conditional operator 
             // basically when you want to return some value and it depends from some condition 
             // better is use ternary conditional operator instead if-elase
-            if (exceptionDetails != null)
-			{
-				return View(new CustomErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ThrownException = exceptionDetails });
-			}
-			else
-			{
-				return View();
-			}
+			return (exceptionDetails != null) ? View(new CustomErrorViewModel { RequestId = Activity.Current?.Id ??
+				HttpContext.TraceIdentifier, ThrownException = exceptionDetails }) : View();
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace WebDotNetMentoringProgram.Models
+﻿using WebDotNetMentoringProgram.Models;
+
+namespace WebDotNetMentoringProgram.Abstractions
 {
     // all interfaces and abstract class should be placed in folder abstractions 
     public interface ICategoryRepository

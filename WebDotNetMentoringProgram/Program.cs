@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.MiddleWares;
-using WebDotNetMentoringProgram.Models;
+using WebDotNetMentoringProgram.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
