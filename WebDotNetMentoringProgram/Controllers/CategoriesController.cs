@@ -38,6 +38,11 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Image(int? id)
         {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
             var _categories = _categoryRepository.GetCategories();
 
             var _categoryPicture = (from _category in _categories
@@ -58,6 +63,11 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> ChangeImage(int? id)
         {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
             var _categories = _categoryRepository.GetCategories();
 
             var _categoryPicture = (from _category in _categories
@@ -78,6 +88,11 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
         {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+
             if ((imageFileUpload == null) || (imageFileUpload.ImageFile == null))
             {
                 return Problem($"Entity set {nameof(ImageFileUpload)} or {nameof(ImageFileUpload.ImageFile)} is null.");

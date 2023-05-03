@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebDotNetMentoringProgram.Abstractions;
 
 namespace WebDotNetMentoringProgram.ViewModels
 {
-    public class ProductTableViewModel
+    public class ProductTableViewModel : IProductTableViewModel
 	{
         [Required]
         [Range(0, 100)]

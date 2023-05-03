@@ -1,18 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Controllers;
-using WebDotNetMentoringProgramTest.Mocks;
+using WebDotNetMentoringProgram.Models;
+using Assert = Xunit.Assert;
 
 namespace WebDotNetMentoringProgramTest
 {
+    [TestFixture]
     public class SupplierTests
     {
-        [Fact]
-        public void Index_ViewResult_Test()
+        private Mock<ISupplierRepository> _supplierRepository;
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            _supplierRepository = new Mock<ISupplierRepository>();
+        }
+
+        [Test]
+        public void For_Index_Action_ViewResult_Test()
         {
             // Arrange
-            var supplierRepositoryMock = new SupplierRepositoryMock();
+            var supplier = new Supplier();
 
-            SuppliersController suppliersController = new SuppliersController(supplierRepositoryMock);
+            supplier.SupplierID = 0;
+
+            _supplierRepository.Setup(x => x.GetSupplierById(It.IsAny<int>()))
+                .Returns(supplier);
+
+            SuppliersController suppliersController = new SuppliersController(_supplierRepository.Object);
 
             // Act
             var result = suppliersController.Index().Result;

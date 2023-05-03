@@ -117,7 +117,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Edit(int? id, ProductTableViewModel productTableViewModel)
+        public async Task<IActionResult> Edit(int? id, IProductTableViewModel productTableViewModel)
         {
             if (id != productTableViewModel.ProductID)
             {
@@ -196,7 +196,7 @@ namespace WebDotNetMentoringProgram.Controllers
             };
         }
 
-        private Product CreateProductFromProductTableViewModel(ProductTableViewModel productTableViewModel)
+        private Product CreateProductFromProductTableViewModel(IProductTableViewModel productTableViewModel)
         {
             var supplierSelected = _supplierRepository.GetSupplierByName(productTableViewModel.CompanyName);
             var categorySelected = _categoryRepository.GetCategoryByName(productTableViewModel.CategoryName);

@@ -1,24 +1,35 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NUnit.Framework;
 using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Controllers;
 using WebDotNetMentoringProgram.Models;
-using WebDotNetMentoringProgram.ViewModels;
-using WebDotNetMentoringProgramTest.Mocks;
+using Assert = Xunit.Assert;
 
 namespace WebDotNetMentoringProgramTest
 {
+    [TestFixture]
     public class ProductTests
     {
-        [Fact]
-        public void Index_RequestOneProduct_ViewResult_Test()
+        private Mock<IProductRepository> _productRepository;
+        private Mock<ICategoryRepository> _categoryRepository;
+        private Mock<ISupplierRepository> _supplierRepository;
+        private Mock<IProductTableViewModel> _productTableViewModel;
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            _productRepository = new Mock<IProductRepository>();
+            _categoryRepository = new Mock<ICategoryRepository>();
+            _supplierRepository = new Mock<ISupplierRepository>();
+            _productTableViewModel = new Mock<IProductTableViewModel>();
+        }
+
+        [Test]
+        public void For_Index_Request_A_Product_ViewResult_Result()
         {
             // Arrange
-            var productRepositoryMock = new Mock<IProductRepository>();
-            var categoryRepositoryMock = new Mock<ICategoryRepository>();
-            var supplierRepositoryMock = new Mock<ISupplierRepository>();
-
-            ProductsController productsController = new ProductsController(productRepositoryMock.Object, categoryRepositoryMock.Object, supplierRepositoryMock.Object);
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
             var result = productsController.Index(1).Result;
@@ -27,32 +38,52 @@ namespace WebDotNetMentoringProgramTest
             Assert.IsType<ViewResult>(result);
         }
 
-        [Fact]
-        public void Details_IndexOutOfRangeInput_NotFoundResult_Test()
+        [Test]
+        public void For_Details_Action_With_Null_Index_Input_BadRequestResult_Result()
         {
             // Arrange
-            var productRepositoryMock = new Mock<IProductRepository>();
-            var categoryRepositoryMock = new Mock<ICategoryRepository>();
-            var supplierRepositoryMock = new Mock<ISupplierRepository>();
+            var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
 
-            ProductsController productsController = new ProductsController(productRepositoryMock.Object, categoryRepositoryMock.Object, supplierRepositoryMock.Object);
+            _productRepository.Setup(x => x.GetProductById(It.IsAny<int>()))
+                .Returns(product);
+
+            _supplierRepository.Setup(x => x.GetSupplierById(It.IsAny<int>()))
+                .Returns(new Supplier());
+
+            _categoryRepository.Setup(x => x.GetCategoryById(It.IsAny<int>()))
+                .Returns(new Category());
+
+            _productTableViewModel.Setup(x => x.ProductID).Returns(1);
+            _productTableViewModel.Setup(x => x.CompanyName).Returns("companyName");
+
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Details(0).Result;
+            var result = productsController.Details(null).Result;
 
             // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.IsType<BadRequestResult>(result);
         }
 
-        [Fact]
-        public void Details_IndexInRangeInput_ViewResult_Test()
+        [Test]
+        public void For_Details_Action_With_Index_1_ViewResult_Result()
         {
             // Arrange
-            var productRepositoryMock = new ProductRepositoryMock();
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-            var supplierRepositoryMock = new SupplierRepositoryMock();
+            var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
 
-            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+            _productRepository.Setup(x => x.GetProductById(It.IsAny<int>()))
+                .Returns(product);
+
+            _supplierRepository.Setup(x => x.GetSupplierById(It.IsAny<int>()))
+                .Returns(new Supplier());
+
+            _categoryRepository.Setup(x => x.GetCategoryById(It.IsAny<int>()))
+                .Returns(new Category());
+
+            _productTableViewModel.Setup(x => x.ProductID).Returns(1);
+            _productTableViewModel.Setup(x => x.CompanyName).Returns("companyName");
+
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
             var result = productsController.Details(1).Result;
@@ -61,15 +92,11 @@ namespace WebDotNetMentoringProgramTest
             Assert.IsType<ViewResult>(result);
         }
 
-        [Fact]
-        public void Create_NewProduct_ValidModel_Test()
+        [Test]
+        public void For_Create_New_Product_RedirectToAction_Result()
         {
             // Arrange
-            var productRepositoryMock = new ProductRepositoryMock();
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-            var supplierRepositoryMock = new SupplierRepositoryMock();
-
-            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
             var result = productsController.Create(new Product(1, "TestProduct", 1, 2, "", decimal.One, 1, 0, 0, false)).Result;
@@ -78,15 +105,22 @@ namespace WebDotNetMentoringProgramTest
             Assert.IsType<RedirectToActionResult>(result);
         }
 
-        [Fact]
-        public void Edit_ProductId1_ViewModel_Test()
+        [Test]
+        public void For_Edit_With_Product_Id_1_ViewModel_Result()
         {
             // Arrange
-            var productRepositoryMock = new ProductRepositoryMock();
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-            var supplierRepositoryMock = new SupplierRepositoryMock();
+            var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
 
-            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+            _productRepository.Setup(x => x.GetProductById(It.IsAny<int>()))
+                .Returns(product);
+
+            _supplierRepository.Setup(x => x.GetSupplierById(It.IsAny<int>()))
+                .Returns(new Supplier());
+
+            _categoryRepository.Setup(x => x.GetCategoryById(It.IsAny<int>()))
+                .Returns(new Category());
+
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
             var result = productsController.Edit(1).Result;
@@ -95,22 +129,30 @@ namespace WebDotNetMentoringProgramTest
             Assert.IsType<ViewResult>(result);
         }
 
-        [Fact]
-        public void Edit_Product_ViewModel_Test()
+        [Test]
+        public void For_Edit_With_Product_RedirectToAction_Result()
         {
             // Arrange
-            var productRepositoryMock = new ProductRepositoryMock();
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-            var supplierRepositoryMock = new SupplierRepositoryMock();
+            var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
+            var supplier = new Supplier();
+            var category = new Category();
 
-            ProductsController productsController = new ProductsController(productRepositoryMock, categoryRepositoryMock, supplierRepositoryMock);
+            _productRepository.Setup(x => x.GetProductById(It.IsAny<int>()))
+                .Returns(product);
 
-            ProductTableViewModel productTableViewModel = new ProductTableViewModel();
+            _supplierRepository.Setup(x => x.GetSupplierByName(It.IsAny<string>()))
+                .Returns(supplier);
 
-            productTableViewModel.ProductID = 1;
+            _categoryRepository.Setup(x => x.GetCategoryByName(It.IsAny<string>()))
+                .Returns(category);
+
+            _productTableViewModel.Setup(x => x.ProductID).Returns(1);
+            _productTableViewModel.Setup(x => x.CompanyName).Returns("companyName");
+
+            ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Edit(1, productTableViewModel).Result;
+            var result = productsController.Edit(1, _productTableViewModel.Object).Result;
 
             // Assert
             Assert.IsType<RedirectToActionResult>(result);

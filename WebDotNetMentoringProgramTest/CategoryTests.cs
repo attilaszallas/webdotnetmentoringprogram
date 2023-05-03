@@ -1,19 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
+using NUnit.Framework;
+using SixLabors.ImageSharp.Formats.Bmp;
+using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Controllers;
+using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.ViewModels;
-using WebDotNetMentoringProgramTest.Mocks;
+using Assert = Xunit.Assert;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace WebDotNetMentoringProgramTest
 {
+    [TestFixture]
     public class CategoryTests
     {
-        [Fact]
-        public void Index_ViewResult_Test()
+        private Mock<ICategoryRepository> _categoryRepository;
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            _categoryRepository = new Mock<ICategoryRepository>();
+        }
+
+        [Test]
+        public void For_Index_Action_ViewResult_Result()
         {
             // Arrange
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-
-            CategoriesController categoriesController = new CategoriesController(categoryRepositoryMock);
+            CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
             var result = categoriesController.Index().Result;
@@ -22,43 +35,65 @@ namespace WebDotNetMentoringProgramTest
             Assert.IsType<ViewResult>(result);
         }
 
-        [Fact]
-        public void Image_CategoryRepositoryNull_Failure_Test()
+        [Test]
+        public void For_Image_FileContent_Result()
         {
             // Arrange
-            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var bitmap = SixLabors.ImageSharp.Image.Load("./w3c_home.bmp");
 
-            CategoriesController categoriesController = new CategoriesController(null);
+            var category = new Category();
+            category.CategoryId = 1;
+            category.Picture = ImageToByteArray(bitmap);
+
+            var categories = new List<Category>
+            {
+                category
+            };
+
+            _categoryRepository.Setup(x => x.GetCategories())
+                .Returns(categories);
+
+            CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
             var result = categoriesController.Image(1).Result;
 
             // Assert
-            Assert.IsType<ObjectResult>(result);
+            Assert.IsType<FileContentResult>(result);
         }
 
-        [Fact]
-        public void ChangeImage_CategoryRepositoryNull_Failure_Test()
+        [Test]
+        public void For_ChangeImage_Action_With_Input_Null_BadRequest_Result()
         {
             // Arrange
-            var categoryRepositoryMock = new CategoryRepositoryMock();
-
-            CategoriesController categoriesController = new CategoriesController(null);
+            CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
-            var result = categoriesController.ChangeImage(1).Result;
+            var result = categoriesController.ChangeImage(null).Result;
 
             // Assert
-            Assert.IsType<ObjectResult>(result);
+            Assert.IsType<BadRequestResult>(result);
         }
 
-        [Fact]
-        public void NewImage_CategoryRepositoryNull_Failure_Test()
+        [Test]
+        public void For_NewImage_Action_With_Index_Null_BadRequest_Result()
         {
             // Arrange
-            var categoryRepositoryMock = new CategoryRepositoryMock();
+            var bitmap = SixLabors.ImageSharp.Image.Load("./w3c_home.bmp");
 
-            CategoriesController categoriesController = new CategoriesController(null);
+            var category = new Category();
+            category.CategoryId = 1;
+            category.Picture = ImageToByteArray(bitmap);
+
+            var categories = new List<Category>
+            {
+                category
+            };
+
+            _categoryRepository.Setup(x => x.GetCategories())
+                .Returns(categories);
+
+            CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             ImageFileUpload imageFileUpload = new ImageFileUpload();
 
@@ -67,6 +102,13 @@ namespace WebDotNetMentoringProgramTest
 
             // Assert
             Assert.IsType<ObjectResult>(result);
+        }
+
+        private byte[] ImageToByteArray(Image img)
+        {
+            MemoryStream ms = new MemoryStream();
+            img.Save(ms, new BmpEncoder());
+            return ms.ToArray();
         }
     }
 }
