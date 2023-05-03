@@ -69,8 +69,6 @@
                             {
                                 context.Response.Body = memoryStream;
 
-                                //await _next(context);
-
                                 memoryStream.Position = 0;
 
                                 bytes = memoryStream.ToArray();
