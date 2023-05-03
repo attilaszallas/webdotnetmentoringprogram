@@ -17,7 +17,9 @@
             {
                 var contextRequestPath = context.Request.Path;
 
-                var imageCacheFilePath = configuration["ImageFileCacheFolder"] + "\\" + contextRequestPath.Value.Replace("/", "") + ".bmp";
+                var imageCacheFolder = configuration["ImageFileCacheFolder"];
+
+                var imageCacheFilePath = imageCacheFolder + "\\" + contextRequestPath.Value.Replace("/", "") + ".bmp";
 
                 bool cacheFileShouldBeUsed = false;
                 if (File.Exists(imageCacheFilePath))
@@ -46,31 +48,43 @@
                 }
                 else
                 {
-                    var originalBody = context.Response.Body;
-
-                    try
+                    int maxCount;
+                    if (!int.TryParse(configuration["MaxImageFileCacheCount"], out maxCount))
                     {
-                        byte[] bytes;
-
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            context.Response.Body = memoryStream;
-
-                            //await _next(context);
-
-                            memoryStream.Position = 0;
-
-                            bytes = memoryStream.ToArray();
-                        }
-
-                        using (var fileStream = new FileStream(imageCacheFilePath, FileMode.Create, System.IO.FileAccess.Write))
-                        {
-                            fileStream.Write(bytes, 0, bytes.Length);
-                        }
+                        throw new Exception("MaxImageFileCacheCount parameter is not an integer.");
                     }
-                    finally
+                                  
+                    var fileCount = (from file in Directory.EnumerateFiles(imageCacheFolder, "*.bmp", SearchOption.AllDirectories)
+                                     select file).Count();
+
+                    if (fileCount < maxCount)
                     {
-                        context.Response.Body = originalBody;
+                        var originalBody = context.Response.Body;
+
+                        try
+                        {
+                            byte[] bytes;
+
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                context.Response.Body = memoryStream;
+
+                                //await _next(context);
+
+                                memoryStream.Position = 0;
+
+                                bytes = memoryStream.ToArray();
+                            }
+
+                            using (var fileStream = new FileStream(imageCacheFilePath, FileMode.Create, System.IO.FileAccess.Write))
+                            {
+                                fileStream.Write(bytes, 0, bytes.Length);
+                            }
+                        }
+                        finally
+                        {
+                            context.Response.Body = originalBody;
+                        }
                     }
                 }
             }

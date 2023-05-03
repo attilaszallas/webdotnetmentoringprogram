@@ -24,21 +24,17 @@ namespace WebDotNetMentoringProgram.Filters
 
             if (_isLoggingFilterEnabled)
             {
-                _logger.LogInformation(
-                    $"- {nameof(LoggingResponseHeaderFilterService)}.{nameof(OnResultExecuting)}");
-                /*
-                context.HttpContext.Response.Headers.Add(
-                    nameof(OnResultExecuting), nameof(LoggingResponseHeaderFilterService));
-                */
+                _logger.LogInformation($"Action {actionName} starts. TimeStamp: {DateTime.Now}");
             }
         }
 
         public void OnResultExecuted(ResultExecutedContext context)
         {
+            string actionName = context.ActionDescriptor.DisplayName;
+
             if (_isLoggingFilterEnabled)
             {
-                _logger.LogInformation(
-                    $"- {nameof(LoggingResponseHeaderFilterService)}.{nameof(OnResultExecuted)}");
+                _logger.LogInformation($"Action {actionName} ends. TimeStamp: {DateTime.Now}");
             }
         }
     }
