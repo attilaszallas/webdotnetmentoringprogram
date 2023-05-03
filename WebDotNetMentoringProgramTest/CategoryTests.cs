@@ -36,7 +36,7 @@ namespace WebDotNetMentoringProgramTest
         }
 
         [Test]
-        public void For_Image_FileContent_Result()
+        public void For_Image_Action_FileContent_Result()
         {
             // Arrange
             var bitmap = SixLabors.ImageSharp.Image.Load("./w3c_home.bmp");

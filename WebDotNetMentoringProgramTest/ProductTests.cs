@@ -26,8 +26,8 @@ namespace WebDotNetMentoringProgramTest
         }
 
         [Test]
-        public void For_Index_Request_A_Product_ViewResult_Result()
-        {
+        public void For_Index_Action_Request_A_Product_ViewResult_Result()
+        {            
             // Arrange
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
@@ -93,7 +93,7 @@ namespace WebDotNetMentoringProgramTest
         }
 
         [Test]
-        public void For_Create_New_Product_RedirectToAction_Result()
+        public void For_Create_Action_New_Product_RedirectToAction_Result()
         {
             // Arrange
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
@@ -106,7 +106,7 @@ namespace WebDotNetMentoringProgramTest
         }
 
         [Test]
-        public void For_Edit_With_Product_Id_1_ViewModel_Result()
+        public void For_Edit_Action_With_Product_Id_1_ViewModel_Result()
         {
             // Arrange
             var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
@@ -130,7 +130,7 @@ namespace WebDotNetMentoringProgramTest
         }
 
         [Test]
-        public void For_Edit_With_Product_RedirectToAction_Result()
+        public void For_Edit_Action_With_Product_RedirectToAction_Result()
         {
             // Arrange
             var product = new Product(1, "productName", 1, 1, "quantity", 1.0m, 1, 1, 1, false);
