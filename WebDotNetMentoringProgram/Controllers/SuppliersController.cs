@@ -17,17 +17,12 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Suppliers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             // tenatary condition will be look better
-            if (_supplierRepository != null)
-            {
-                return View(_supplierRepository.GetSuppliers());
-            }
-            else
-            {
-                return Problem($"Entity set '{nameof(SupplierRepository)}' is null.");
-            }
+            return (_supplierRepository != null)
+                ? View(_supplierRepository.GetSuppliers())
+                : Problem($"Entity set '{nameof(SupplierRepository)}' is null.");
         }
     }
 }

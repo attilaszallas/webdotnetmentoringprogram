@@ -44,7 +44,7 @@ namespace WebDotNetMentoringProgramTest
             productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Edit(1).Result;
+            var result = productsController.Edit(1);
 
             // Assert
             result.Should().BeOfType<ViewResult>();

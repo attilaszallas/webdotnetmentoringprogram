@@ -8,7 +8,7 @@ namespace WebDotNetMentoringProgram.Controllers
 {
     public class CategoriesController : Controller
     {
-        private ICategoryRepository _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
         public CategoriesController(ICategoryRepository categoryRepository)
         {
@@ -17,7 +17,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Categories
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var _categories = _categoryRepository.GetCategories();
 
@@ -30,7 +30,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [Route("Images/{id?}")]
         [Route("Categories/Image/{id?}")]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Image(int? id)
+        public IActionResult Image(int? id)
         {
             if (id == null)
             {
@@ -55,7 +55,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         [Route("Categories/ChangeImage/{id?}")]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> ChangeImage(int? id)
+        public IActionResult ChangeImage(int? id)
         {
             if (id == null)
             {
@@ -80,7 +80,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [Route("Categories/Image/{id?}")]
         [HttpPost, ActionName("NewImage")]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> NewImage(int? id, ImageFileUpload imageFileUpload)
+        public IActionResult NewImage(int? id, ImageFileUpload imageFileUpload)
         {
             if (id == null)
             {
@@ -137,7 +137,10 @@ namespace WebDotNetMentoringProgram.Controllers
 
         private byte[] RemoveGarbageBytes(byte[] bytes)
         {
-            return (bytes != null && bytes.Length == 10746) ? bytes.Skip(78).ToArray() : bytes;
+            // the original Northwind database images have 10746 bytes
+            return (bytes != null && bytes.Length == 10746)
+                ? bytes.Skip(78).ToArray()
+                : bytes;
         }
 
         private string GetImageBase64String(byte[] categoryPicture)

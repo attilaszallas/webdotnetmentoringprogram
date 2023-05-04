@@ -9,9 +9,9 @@ namespace WebDotNetMentoringProgram.Controllers
     public class ProductsController : Controller
     {
         // should be private readonly
-        private IProductRepository _productRepository;
-        private ICategoryRepository _categoryRepository;
-        private ISupplierRepository _supplierRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ISupplierRepository _supplierRepository;
 
         public ProductsController(IProductRepository productRepository, ICategoryRepository categoryRepository, ISupplierRepository supplierRepository)
         {
@@ -22,7 +22,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Index(int _numberOfProductsToShow = 10)
+        public IActionResult Index(int _numberOfProductsToShow = 10)
         {
             if (_numberOfProductsToShow == 0)
                 _numberOfProductsToShow = _productRepository.GetProductCount();
@@ -41,7 +41,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Details/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             // if we don't have any await operation in method body we don't need to use async Task
             if (id == null)
@@ -74,7 +74,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Create([Bind("ProductID,ProductName,SupplierID,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
+        public IActionResult Create([Bind("ProductID,ProductName,SupplierID,CategoryId,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Edit/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -117,7 +117,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Edit(int? id, IProductTableViewModel productTableViewModel)
+        public IActionResult Edit(int? id, IProductTableViewModel productTableViewModel)
         {
             if (id != productTableViewModel.ProductID)
             {
@@ -137,7 +137,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         // GET: Products/Delete/5
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
@@ -157,7 +157,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public IActionResult DeleteConfirmed(int? id)
         {
             // please keep the same behaviour for all endpoint actions 
             // one you check id and whole context here only context

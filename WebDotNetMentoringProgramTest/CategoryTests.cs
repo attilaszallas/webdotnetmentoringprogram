@@ -29,7 +29,7 @@ namespace WebDotNetMentoringProgramTest
             CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
-            var result = categoriesController.Index().Result;
+            var result = categoriesController.Index();
 
             // Assert
             Assert.IsType<ViewResult>(result);
@@ -56,7 +56,7 @@ namespace WebDotNetMentoringProgramTest
             CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
-            var result = categoriesController.Image(1).Result;
+            var result = categoriesController.Image(1);
 
             // Assert
             Assert.IsType<FileContentResult>(result);
@@ -69,7 +69,7 @@ namespace WebDotNetMentoringProgramTest
             CategoriesController categoriesController = new CategoriesController(_categoryRepository.Object);
 
             // Act
-            var result = categoriesController.ChangeImage(null).Result;
+            var result = categoriesController.ChangeImage(null);
 
             // Assert
             Assert.IsType<BadRequestResult>(result);
@@ -98,7 +98,7 @@ namespace WebDotNetMentoringProgramTest
             ImageFileUpload imageFileUpload = new ImageFileUpload();
 
             // Act
-            var result = categoriesController.NewImage(1, imageFileUpload).Result;
+            var result = categoriesController.NewImage(1, imageFileUpload);
 
             // Assert
             Assert.IsType<ObjectResult>(result);

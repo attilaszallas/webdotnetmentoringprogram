@@ -32,7 +32,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Index(1).Result;
+            var result = productsController.Index(1);
 
             // Assert
             Assert.IsType<ViewResult>(result);
@@ -59,7 +59,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Details(null).Result;
+            var result = productsController.Details(null);
 
             // Assert
             Assert.IsType<BadRequestResult>(result);
@@ -86,7 +86,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Details(1).Result;
+            var result = productsController.Details(1);
 
             // Assert
             Assert.IsType<ViewResult>(result);
@@ -99,7 +99,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Create(new Product(1, "TestProduct", 1, 2, "", decimal.One, 1, 0, 0, false)).Result;
+            var result = productsController.Create(new Product(1, "TestProduct", 1, 2, "", decimal.One, 1, 0, 0, false));
 
             // Assert
             Assert.IsType<RedirectToActionResult>(result);
@@ -123,7 +123,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Edit(1).Result;
+            var result = productsController.Edit(1);
 
             // Assert
             Assert.IsType<ViewResult>(result);
@@ -152,7 +152,7 @@ namespace WebDotNetMentoringProgramTest
             ProductsController productsController = new ProductsController(_productRepository.Object, _categoryRepository.Object, _supplierRepository.Object);
 
             // Act
-            var result = productsController.Edit(1, _productTableViewModel.Object).Result;
+            var result = productsController.Edit(1, _productTableViewModel.Object);
 
             // Assert
             Assert.IsType<RedirectToActionResult>(result);

@@ -33,7 +33,7 @@ namespace WebDotNetMentoringProgramTest
             SuppliersController suppliersController = new SuppliersController(_supplierRepository.Object);
 
             // Act
-            var result = suppliersController.Index().Result;
+            var result = suppliersController.Index();
 
             // Assert
             Assert.IsType<ViewResult>(result);
