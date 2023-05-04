@@ -19,7 +19,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Index()
         {
-            // not need to assign injected dependency to separate value 
+            // tenatary condition will be look better
             if (_supplierRepository != null)
             {
                 return View(_supplierRepository.GetSuppliers());

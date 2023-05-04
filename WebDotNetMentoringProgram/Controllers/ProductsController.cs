@@ -8,6 +8,7 @@ namespace WebDotNetMentoringProgram.Controllers
 {
     public class ProductsController : Controller
     {
+        // should be private readonly
         private IProductRepository _productRepository;
         private ICategoryRepository _categoryRepository;
         private ISupplierRepository _supplierRepository;
@@ -42,7 +43,7 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Details(int? id)
         {
-            // we need to set int id as nullable or remove this condition because it will never occure
+            // if we don't have any await operation in method body we don't need to use async Task
             if (id == null)
             {
                 return BadRequest();
@@ -87,7 +88,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Edit(int? id)
         {
-            // same here
             if (id == null)
             {
                 return BadRequest();
@@ -139,7 +139,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public async Task<IActionResult> Delete(int? id)
         {
-            // and here
             if (id == null)
             {
                 return BadRequest();
