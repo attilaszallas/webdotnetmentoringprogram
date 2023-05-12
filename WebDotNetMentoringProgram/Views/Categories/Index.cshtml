@@ -26,9 +26,8 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                <image-link image-id="@item.CategoryId">@Html.DisplayFor(modelItem => item.CategoryName)</image-link>
-
-                <!-- Html.ImageLink(@item.CategoryId, @Html.DisplayFor(modelItem => item.CategoryName)); -->
+                <!--TagHelper version--> <image-link image-id="@item.CategoryId">@Html.DisplayFor(modelItem => item.CategoryName)</image-link>
+                <!--HtmlHelper version--> @Html.ImageLink(@item.CategoryId, @Html.DisplayFor(modelItem => item.CategoryName))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
