@@ -1,4 +1,7 @@
-﻿@model IEnumerable<WebDotNetMentoringProgram.ViewModels.CategoryViewModel>
+﻿@using Microsoft.AspNetCore.Mvc.ViewFeatures;
+@using WebDotNetMentoringProgram.Helpers;
+
+@model IEnumerable<WebDotNetMentoringProgram.ViewModels.CategoryViewModel>
 
 @{
     ViewData["Title"] = "Categories";
@@ -23,7 +26,9 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
+                <image-link image-id="@item.CategoryId">@Html.DisplayFor(modelItem => item.CategoryName)</image-link>
+
+                <!-- Html.ImageLink(@item.CategoryId, @Html.DisplayFor(modelItem => item.CategoryName)); -->
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
