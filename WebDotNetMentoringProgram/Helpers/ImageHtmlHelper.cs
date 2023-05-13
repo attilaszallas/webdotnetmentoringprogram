@@ -14,6 +14,7 @@ namespace WebDotNetMentoringProgram.Helpers
             return new HtmlString(htmlString);
         }
 
+        // this method can be private
         public static string GetString(IHtmlContent content)
         {
             if (content == null)
