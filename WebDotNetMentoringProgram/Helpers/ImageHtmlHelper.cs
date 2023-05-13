@@ -15,7 +15,7 @@ namespace WebDotNetMentoringProgram.Helpers
         }
 
         // this method can be private
-        public static string GetString(IHtmlContent content)
+        private static string GetString(IHtmlContent content)
         {
             if (content == null)
                 return string.Empty;
