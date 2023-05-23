@@ -38,6 +38,12 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.File(builder.Configuration["Logging:LogFilePath"]));
 */
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+});
+
 var app = builder.Build();
 app.Logger.LogInformation("Application build is ready.");
 
@@ -51,6 +57,9 @@ if (!app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/CustomError");
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
