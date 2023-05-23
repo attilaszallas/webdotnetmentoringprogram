@@ -5,7 +5,11 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDotNetMentoringProgram", "WebDotNetMentoringProgram\WebDotNetMentoringProgram.csproj", "{262AC2C5-E769-482F-962E-2BC0132F56B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDotNetMentoringProgramTest", "WebDotNetMentoringProgramTest\WebDotNetMentoringProgramTest.csproj", "{5AB53F76-73D1-47C1-A700-5B12AF70679B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDotNetMentoringProgramTest", "WebDotNetMentoringProgramTest\WebDotNetMentoringProgramTest.csproj", "{5AB53F76-73D1-47C1-A700-5B12AF70679B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDotNetMentoringProgramApiClient", "WebDotNetMentoringProgramApiClient\WebDotNetMentoringProgramApiClient.csproj", "{956696E5-A791-45F4-852E-E9B662522B07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDotNetMentoringProgramApiClientTest", "WebDotNetMentoringProgramApiClientTest\WebDotNetMentoringProgramApiClientTest.csproj", "{8F9A4011-7CB0-49D2-877B-469D5C248C7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{5AB53F76-73D1-47C1-A700-5B12AF70679B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB53F76-73D1-47C1-A700-5B12AF70679B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB53F76-73D1-47C1-A700-5B12AF70679B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{956696E5-A791-45F4-852E-E9B662522B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{956696E5-A791-45F4-852E-E9B662522B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{956696E5-A791-45F4-852E-E9B662522B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{956696E5-A791-45F4-852E-E9B662522B07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9A4011-7CB0-49D2-877B-469D5C248C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9A4011-7CB0-49D2-877B-469D5C248C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9A4011-7CB0-49D2-877B-469D5C248C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9A4011-7CB0-49D2-877B-469D5C248C7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

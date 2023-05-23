@@ -44,6 +44,13 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost("UpdateImage")]
         public IActionResult UpdateImage(int id, byte[] image)
         {
+            var _categories = _categoryRepository.GetCategories();
+
+            if (id == 0 || id > _categories.Count())
+            {
+                return BadRequest();
+            }
+
             var _category = _categoryRepository.GetCategoryById(id);
 
             _category.Picture = image;
