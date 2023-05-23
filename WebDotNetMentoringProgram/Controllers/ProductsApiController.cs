@@ -27,8 +27,8 @@ namespace WebDotNetMentoringProgramApi.Controllers
             return Ok(productNames);
         }
 
-        [HttpPost("CreateProducts")]
-        public IActionResult CreateProducts(Product product)
+        [HttpPost("CreateProduct")]
+        public IActionResult CreateProduct(Product product)
         {
             if (product == null)
             {
@@ -40,8 +40,8 @@ namespace WebDotNetMentoringProgramApi.Controllers
             return Ok();
         }
         
-        [HttpPost("UpdateProducts")]
-        public IActionResult UpdateProducts(Product product)
+        [HttpPost("UpdateProduct")]
+        public IActionResult UpdateProduct(Product product)
         {
             if (product == null) 
             {
@@ -53,8 +53,8 @@ namespace WebDotNetMentoringProgramApi.Controllers
             return Ok();
         }
  
-        [HttpPost("DeleteProducts")]
-        public IActionResult DeleteProducts(Product product)
+        [HttpPost("DeleteProduct")]
+        public IActionResult DeleteProduct(Product product)
         {
             if (product == null)
             {
