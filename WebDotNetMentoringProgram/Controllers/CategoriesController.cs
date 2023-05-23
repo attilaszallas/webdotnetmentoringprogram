@@ -16,6 +16,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         // GET: Categories
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public IActionResult Index()
         {
@@ -29,6 +30,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         [Route("Images/{id?}")]
         [Route("Categories/Image/{id?}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public IActionResult Image(int? id)
         {
@@ -54,6 +56,7 @@ namespace WebDotNetMentoringProgram.Controllers
         }
 
         [Route("Categories/ChangeImage/{id?}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public IActionResult ChangeImage(int? id)
         {
@@ -79,6 +82,7 @@ namespace WebDotNetMentoringProgram.Controllers
 
         [Route("Categories/Image/{id?}")]
         [HttpPost, ActionName("NewImage")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ServiceFilter(typeof(LoggingResponseHeaderFilterService))]
         public IActionResult NewImage(int? id, ImageFileUpload imageFileUpload)
         {
