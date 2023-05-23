@@ -7,6 +7,8 @@ using WebDotNetMentoringProgram.MiddleWares;
 using WebDotNetMentoringProgram.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 
+var AllowSpecificOrigins = "_allowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<WebDotNetMentoringProgramContext>(options =>
@@ -18,6 +20,15 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                      });
+});
 
 builder.Services.AddScoped<LoggingResponseHeaderFilterService>();
 
@@ -47,6 +58,8 @@ app.UseStaticFiles();
 
 app.Logger.LogInformation("Use Routing");
 app.UseRouting();
+
+app.UseCors(AllowSpecificOrigins);
 
 app.Logger.LogInformation("Use Authorization");
 app.UseAuthorization();
