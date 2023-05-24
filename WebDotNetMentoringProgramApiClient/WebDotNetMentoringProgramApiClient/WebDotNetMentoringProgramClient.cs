@@ -177,20 +177,19 @@ namespace WebDotNetMentoringProgramApiClient
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="content"> The content to send as the body of the request. </param>
-        /// <param name="contentType"> Body Parameter content-type. Allowed values: &quot;application/*+json&quot; | &quot;application/json&quot; | &quot;text/json&quot;. </param>
         /// <param name="id"> The Int32 to use. </param>
+        /// <param name="image"> The String to use. </param>
         /// <param name="context"> The request context, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <exception cref="RequestFailedException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        /// <include file="Docs/WebDotNetMentoringProgramClient.xml" path="doc/members/member[@name='UpdateImageAsync(RequestContent,ContentType,int?,RequestContext)']/*" />
-        public virtual async Task<Response> UpdateImageAsync(RequestContent content, ContentType contentType, int? id = null, RequestContext context = null)
+        /// <include file="Docs/WebDotNetMentoringProgramClient.xml" path="doc/members/member[@name='UpdateImageAsync(int?,string,RequestContext)']/*" />
+        public virtual async Task<Response> UpdateImageAsync(int? id = null, string image = null, RequestContext context = null)
         {
             using var scope = ClientDiagnostics.CreateScope("WebDotNetMentoringProgramClient.UpdateImage");
             scope.Start();
             try
             {
-                using HttpMessage message = CreateUpdateImageRequest(content, contentType, id, context);
+                using HttpMessage message = CreateUpdateImageRequest(id, image, context);
                 return await _pipeline.ProcessMessageAsync(message, context).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -210,20 +209,19 @@ namespace WebDotNetMentoringProgramApiClient
         /// </item>
         /// </list>
         /// </summary>
-        /// <param name="content"> The content to send as the body of the request. </param>
-        /// <param name="contentType"> Body Parameter content-type. Allowed values: &quot;application/*+json&quot; | &quot;application/json&quot; | &quot;text/json&quot;. </param>
         /// <param name="id"> The Int32 to use. </param>
+        /// <param name="image"> The String to use. </param>
         /// <param name="context"> The request context, which can override default behaviors of the client pipeline on a per-call basis. </param>
         /// <exception cref="RequestFailedException"> Service returned a non-success status code. </exception>
         /// <returns> The response returned from the service. </returns>
-        /// <include file="Docs/WebDotNetMentoringProgramClient.xml" path="doc/members/member[@name='UpdateImage(RequestContent,ContentType,int?,RequestContext)']/*" />
-        public virtual Response UpdateImage(RequestContent content, ContentType contentType, int? id = null, RequestContext context = null)
+        /// <include file="Docs/WebDotNetMentoringProgramClient.xml" path="doc/members/member[@name='UpdateImage(int?,string,RequestContext)']/*" />
+        public virtual Response UpdateImage(int? id = null, string image = null, RequestContext context = null)
         {
             using var scope = ClientDiagnostics.CreateScope("WebDotNetMentoringProgramClient.UpdateImage");
             scope.Start();
             try
             {
-                using HttpMessage message = CreateUpdateImageRequest(content, contentType, id, context);
+                using HttpMessage message = CreateUpdateImageRequest(id, image, context);
                 return _pipeline.ProcessMessage(message, context);
             }
             catch (Exception e)
@@ -513,7 +511,7 @@ namespace WebDotNetMentoringProgramApiClient
             return message;
         }
 
-        internal HttpMessage CreateUpdateImageRequest(RequestContent content, ContentType contentType, int? id, RequestContext context)
+        internal HttpMessage CreateUpdateImageRequest(int? id, string image, RequestContext context)
         {
             var message = _pipeline.CreateMessage(context, ResponseClassifier200);
             var request = message.Request;
@@ -525,9 +523,11 @@ namespace WebDotNetMentoringProgramApiClient
             {
                 uri.AppendQuery("id", id.Value, true);
             }
+            if (image != null)
+            {
+                uri.AppendQuery("image", image, true);
+            }
             request.Uri = uri;
-            request.Headers.Add("Content-Type", contentType.ToString());
-            request.Content = content;
             return message;
         }
 

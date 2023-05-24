@@ -12,6 +12,13 @@ namespace WebDotNetMentoringProgramApiClient
 {
     public class WebDotNetMentoringProgramClientTests
     {
+        private const string _testImagePath = "all_gray.bmp";
+
+        private string TestImageBase64String
+        {
+            get { return ReadImageFileAndConvertToBase64String(_testImagePath); }
+        }
+
         [Test]
         public void Example_GetCategories()
         {
@@ -89,9 +96,7 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
-
-            Response response = client.UpdateImage(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = client.UpdateImage(1, TestImageBase64String);
             Console.WriteLine(response.Status);
         }
 
@@ -100,9 +105,7 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
-
-            Response response = client.UpdateImage(RequestContent.Create(data), ContentType.ApplicationOctetStream, 1234, new RequestContext());
+            Response response = client.UpdateImage(1, TestImageBase64String, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -111,9 +114,7 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
-
-            Response response = await client.UpdateImageAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = await client.UpdateImageAsync(1, TestImageBase64String);
             Console.WriteLine(response.Status);
         }
 
@@ -122,9 +123,7 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
-
-            Response response = await client.UpdateImageAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream, 1234, new RequestContext());
+            Response response = await client.UpdateImageAsync(1, TestImageBase64String, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -171,7 +170,7 @@ namespace WebDotNetMentoringProgramApiClient
 
             var data = new { };
 
-            Response response = client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -194,7 +193,7 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            Response response = client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -205,7 +204,7 @@ namespace WebDotNetMentoringProgramApiClient
 
             var data = new { };
 
-            Response response = await client.CreateProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = await client.CreateProductAsync(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -228,7 +227,7 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = await client.CreateProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            Response response = await client.CreateProductAsync(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -239,7 +238,7 @@ namespace WebDotNetMentoringProgramApiClient
 
             var data = new { };
 
-            Response response = client.UpdateProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = client.UpdateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -262,7 +261,7 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = client.UpdateProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            Response response = client.UpdateProduct(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -273,7 +272,7 @@ namespace WebDotNetMentoringProgramApiClient
 
             var data = new { };
 
-            Response response = await client.UpdateProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            Response response = await client.UpdateProductAsync(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -296,7 +295,7 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = await client.UpdateProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            Response response = await client.UpdateProductAsync(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -305,9 +304,22 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
+            var data = new
+            {
+                productID = 1234,
+                productName = "<productName>",
+                supplierID = 1234,
+                categoryID = 1234,
+                quantityPerUnit = "<quantityPerUnit>",
+                unitPrice = 123.45d,
+                unitsInStock = 1234,
+                unitsOnOrder = 1234,
+                reorderLevel = 1234,
+                discontinued = true,
+            };
 
-            Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
+            Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -330,7 +342,8 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
+            Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
 
@@ -339,9 +352,22 @@ namespace WebDotNetMentoringProgramApiClient
         {
             var client = new WebDotNetMentoringProgramClient();
 
-            var data = new { };
+            var data = new
+            {
+                productID = 1234,
+                productName = "<productName>",
+                supplierID = 1234,
+                categoryID = 1234,
+                quantityPerUnit = "<quantityPerUnit>",
+                unitPrice = 123.45d,
+                unitsInStock = 1234,
+                unitsOnOrder = 1234,
+                reorderLevel = 1234,
+                discontinued = true,
+            };
 
-            Response response = await client.DeleteProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
+            Response response = await client.DeleteProductAsync(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
 
@@ -364,8 +390,14 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            Response response = await client.DeleteProductAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream, new RequestContext());
+            Response response = await client.DeleteProductAsync(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
+        }
+
+        private string ReadImageFileAndConvertToBase64String(string testImageFilePath)
+        {
+            byte[] imageAsBytes = File.ReadAllBytes(testImageFilePath);
+            return Convert.ToBase64String(imageAsBytes);
         }
     }
 }

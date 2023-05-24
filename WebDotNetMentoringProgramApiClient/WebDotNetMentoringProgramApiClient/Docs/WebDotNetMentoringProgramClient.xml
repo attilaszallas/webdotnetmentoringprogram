@@ -59,46 +59,38 @@ Console.WriteLine(response.Status);
 ]]></code>
 </example>
     </member>
-    <member name="UpdateImageAsync(RequestContent,ContentType,int?,RequestContext)">
+    <member name="UpdateImageAsync(int?,string,RequestContext)">
 <example>
-This sample shows how to call UpdateImageAsync with required parameters and request content.
+This sample shows how to call UpdateImageAsync.
 <code><![CDATA[
 var client = new WebDotNetMentoringProgramClient();
 
-var data = new {};
-
-Response response = await client.UpdateImageAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Response response = await client.UpdateImageAsync();
 Console.WriteLine(response.Status);
 ]]></code>
-This sample shows how to call UpdateImageAsync with all parameters and request content.
+This sample shows how to call UpdateImageAsync with all parameters.
 <code><![CDATA[
 var client = new WebDotNetMentoringProgramClient();
 
-var data = new {};
-
-Response response = await client.UpdateImageAsync(RequestContent.Create(data), ContentType.ApplicationOctetStream, 1234, new RequestContext());
+Response response = await client.UpdateImageAsync(1234, "<image>", new RequestContext());
 Console.WriteLine(response.Status);
 ]]></code>
 </example>
     </member>
-    <member name="UpdateImage(RequestContent,ContentType,int?,RequestContext)">
+    <member name="UpdateImage(int?,string,RequestContext)">
 <example>
-This sample shows how to call UpdateImage with required parameters and request content.
+This sample shows how to call UpdateImage.
 <code><![CDATA[
 var client = new WebDotNetMentoringProgramClient();
 
-var data = new {};
-
-Response response = client.UpdateImage(RequestContent.Create(data), ContentType.ApplicationOctetStream);
+Response response = client.UpdateImage();
 Console.WriteLine(response.Status);
 ]]></code>
-This sample shows how to call UpdateImage with all parameters and request content.
+This sample shows how to call UpdateImage with all parameters.
 <code><![CDATA[
 var client = new WebDotNetMentoringProgramClient();
 
-var data = new {};
-
-Response response = client.UpdateImage(RequestContent.Create(data), ContentType.ApplicationOctetStream, 1234, new RequestContext());
+Response response = client.UpdateImage(1234, "<image>", new RequestContext());
 Console.WriteLine(response.Status);
 ]]></code>
 </example>

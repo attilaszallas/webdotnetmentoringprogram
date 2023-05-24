@@ -42,18 +42,34 @@ namespace WebDotNetMentoringProgram.Controllers
         }
         
         [HttpPost("UpdateImage")]
-        public IActionResult UpdateImage(int id, byte[] image)
+        public IActionResult UpdateImage(int id, string image)
         {
             var _categories = _categoryRepository.GetCategories();
 
             if (id == 0 || id > _categories.Count())
             {
-                return BadRequest();
+                return BadRequest("Id is out of range");
+            }
+
+            if (image == string.Empty)
+            {
+                return BadRequest("Image string is empty");
+            }
+
+            byte[] bitmapImage;
+
+            try
+            {
+                bitmapImage = Convert.FromBase64String(image);
+            }
+            catch
+            {
+                return BadRequest("Image format problem");
             }
 
             var _category = _categoryRepository.GetCategoryById(id);
 
-            _category.Picture = image;
+            _category.Picture = bitmapImage;
 
             _categoryRepository.UpdateCategoryById(_category);
 
