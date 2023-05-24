@@ -318,7 +318,6 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
@@ -342,7 +341,6 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Response response = client.DeleteProduct(RequestContent.Create(data), ContentType.ApplicationJson, new RequestContext());
             Console.WriteLine(response.Status);
         }
@@ -366,7 +364,6 @@ namespace WebDotNetMentoringProgramApiClient
                 discontinued = true,
             };
 
-            client.CreateProduct(RequestContent.Create(data), ContentType.ApplicationJson);
             Response response = await client.DeleteProductAsync(RequestContent.Create(data), ContentType.ApplicationJson);
             Console.WriteLine(response.Status);
         }
