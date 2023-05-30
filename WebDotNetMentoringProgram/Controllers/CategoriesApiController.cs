@@ -31,14 +31,12 @@ namespace WebDotNetMentoringProgram.Controllers
         {
             // reading all catogories here is unnecessary 
             // if you not find image for proper id just return not found 404 
-            var _categories = _categoryRepository.GetCategories();
-
-            if (id == 0 || id > _categories.Count())
-            {
-                return BadRequest();
-            }
-
             var _category = _categoryRepository.GetCategoryById(id);
+
+            if (_category == null)
+            { 
+                return NotFound();
+            }
 
             return Ok(_category.Picture);
         }
@@ -47,13 +45,6 @@ namespace WebDotNetMentoringProgram.Controllers
         public IActionResult UpdateImage(int id, string image)
         {
             // same situation here
-            var _categories = _categoryRepository.GetCategories();
-
-            if (id == 0 || id > _categories.Count())
-            {
-                return BadRequest("Id is out of range");
-            }
-
             if (image == string.Empty)
             {
                 return BadRequest("Image string is empty");
@@ -71,6 +62,11 @@ namespace WebDotNetMentoringProgram.Controllers
             }
 
             var _category = _categoryRepository.GetCategoryById(id);
+
+            if (_category == null)
+            {
+                return NotFound();
+            }
 
             _category.Picture = bitmapImage;
 

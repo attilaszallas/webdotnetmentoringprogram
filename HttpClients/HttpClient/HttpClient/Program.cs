@@ -14,20 +14,13 @@ namespace ConsoleHttpClient
             }
         }
 
-        static async Task<IEnumerable<string>> GetAsync(string path)
+        static async Task<IEnumerable<string>?> GetAsync(string path)
         {
-            IEnumerable<string> entities = null;
-
             // use var
-            HttpResponseMessage response = await client.GetAsync(path);
+            var response = await client.GetAsync(path);
 
-            // please change it into tenatary condition when response is Success just return response.Content or null then you don't need this enntities variable
-            if (response.IsSuccessStatusCode)
-            {
-                entities = await response.Content.ReadFromJsonAsync<IEnumerable<string>>();
-            }
-
-            return entities;
+            // please change it into tenatary condition when response is Success just return response.Content or null then you don't need this enntities variable            
+            return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<IEnumerable<string>>() : null;
         }
 
         static void Main()
@@ -48,8 +41,11 @@ namespace ConsoleHttpClient
             {
                 var categories = await GetAsync(categoriesApiUri);
 
-                Console.WriteLine("\n Categories: \n");
-                ShowEntities(categories);
+                if (categories != null)
+                {
+                    Console.WriteLine("\n Categories: \n");
+                    ShowEntities(categories);
+                }
             }
             catch (Exception e)
             {
@@ -60,8 +56,11 @@ namespace ConsoleHttpClient
             {
                 var products = await GetAsync(productsApiUri);
 
-                Console.WriteLine("\n Products: \n");
-                ShowEntities(products);
+                if (products != null)
+                {
+                    Console.WriteLine("\n Products: \n");
+                    ShowEntities(products);
+                }
             }
             catch (Exception e)
             {
