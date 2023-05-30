@@ -33,12 +33,7 @@ namespace WebDotNetMentoringProgram.Controllers
             // if you not find image for proper id just return not found 404 
             var _category = _categoryRepository.GetCategoryById(id);
 
-            if (_category == null)
-            { 
-                return NotFound();
-            }
-
-            return Ok(_category.Picture);
+            return (_category != null) ? Ok(_category.Picture) : NotFound();
         }
         
         [HttpPost("UpdateImage")]
