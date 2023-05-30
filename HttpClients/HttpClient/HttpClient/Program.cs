@@ -16,10 +16,8 @@ namespace ConsoleHttpClient
 
         static async Task<IEnumerable<string>?> GetAsync(string path)
         {
-            // use var
             var response = await client.GetAsync(path);
-
-            // please change it into tenatary condition when response is Success just return response.Content or null then you don't need this enntities variable            
+      
             return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<IEnumerable<string>>() : null;
         }
 

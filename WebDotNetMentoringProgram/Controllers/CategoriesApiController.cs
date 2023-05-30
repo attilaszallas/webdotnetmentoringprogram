@@ -29,8 +29,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpGet("GetImageById")]
         public IActionResult GetImageById(int id)
         {
-            // reading all catogories here is unnecessary 
-            // if you not find image for proper id just return not found 404 
             var _category = _categoryRepository.GetCategoryById(id);
 
             return (_category != null) ? Ok(_category.Picture) : NotFound();
@@ -39,7 +37,6 @@ namespace WebDotNetMentoringProgram.Controllers
         [HttpPost("UpdateImage")]
         public IActionResult UpdateImage(int id, string image)
         {
-            // same situation here
             if (image == string.Empty)
             {
                 return BadRequest("Image string is empty");
