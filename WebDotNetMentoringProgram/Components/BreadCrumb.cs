@@ -8,22 +8,36 @@ namespace WebDotNetMentoringProgram.ViewComponents
 
         public IViewComponentResult Invoke()
         {
-            var request = HttpContext.Request;
-            string controller = request.RouteValues["controller"].ToString();
-            string action = request.RouteValues["action"].ToString();
-
             if (_breadCrumb != null)
             {
                 _breadCrumb = _breadCrumb + " > ";
             }
 
-            _breadCrumb = _breadCrumb + ( (action == "Index")
-                ? controller
-                : action);
+            var _routeValues = HttpContext.Request.RouteValues;
 
-            if (controller == "Home" && action == "Index")
-            { 
-                return Content(string.Empty);
+            if (_routeValues.ContainsKey("controller") && _routeValues.ContainsKey("action"))
+            {
+                var _controller = _routeValues["controller"].ToString();
+                var _action = _routeValues["action"].ToString();
+
+                _breadCrumb = _breadCrumb + ((_action == "Index")
+                    ? _controller
+                    : _action);
+
+                if (_controller == "Home" && _action == "Index")
+                {
+                    return Content(string.Empty);
+                }
+            }
+            else if (_routeValues.ContainsKey("page") && _routeValues.ContainsKey("area"))
+            {
+                var page = _routeValues["page"].ToString();
+
+                _breadCrumb = _breadCrumb + page.Substring(page.LastIndexOf('/') + 1);
+            }
+            else
+            {
+                throw new ArgumentException("Request RouteValues does not containt the expected keys");
             }
 
             ViewBag.BreadCrumb = _breadCrumb;

@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Data;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.MiddleWares;
+using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.Repositories;
-using static System.Net.Mime.MediaTypeNames;
 
 var AllowSpecificOrigins = "_allowSpecificOrigins";
 
@@ -17,6 +18,12 @@ builder.Services.AddDbContext<WebDotNetMentoringProgramContext>(options =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContextConnection")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -32,11 +39,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<LoggingResponseHeaderFilterService>();
 
-/* Serilog
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console()
     .WriteTo.File(builder.Configuration["Logging:LogFilePath"]));
-*/
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -56,7 +61,7 @@ if (!app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/CustomError");
+    // app.UseExceptionHandler("/Home/CustomError");
 
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -70,12 +75,14 @@ app.UseRouting();
 
 app.UseCors(AllowSpecificOrigins);
 
-app.Logger.LogInformation("Use Authorization");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 string contentRootPath = app.Environment.ContentRootPath.ToString();
 string? configurationAllowedHosts = app.Configuration.GetSection("AllowedHosts")?.Value?.ToString();
