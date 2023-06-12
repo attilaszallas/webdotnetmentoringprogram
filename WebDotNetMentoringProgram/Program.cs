@@ -133,6 +133,7 @@ CreateAdminUser(app);
 
 app.Run();
 
+// please move this to extension method
 static void CreateAdminUser(WebApplication app)
 {
     using (var scope = app.Services.CreateScope())
