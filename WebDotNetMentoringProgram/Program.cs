@@ -9,6 +9,7 @@ using Microsoft.Identity.Web.UI;
 using Serilog;
 using WebDotNetMentoringProgram.Abstractions;
 using WebDotNetMentoringProgram.Data;
+using WebDotNetMentoringProgram.Extensions;
 using WebDotNetMentoringProgram.Filters;
 using WebDotNetMentoringProgram.MiddleWares;
 using WebDotNetMentoringProgram.Models;
@@ -129,52 +130,8 @@ app.Logger.LogInformation($"Additional information: current configuration values
 
 app.UseMiddleware<ImageFileCacheMiddleWare>();
 
-CreateAdminUser(app);
+PredefinedUsers.CreateAdminUser(app);
 
 app.Run();
 
 // please move this to extension method
-static void CreateAdminUser(WebApplication app)
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated();
-
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        var roleName = "Administrator";
-        IdentityResult result;
-
-        var roleExist = roleManager.RoleExistsAsync(roleName).Result;
-        if (!roleExist)
-        {
-            result = roleManager.CreateAsync(new IdentityRole(roleName)).Result;
-            if (result.Succeeded)
-            {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-                var admin = userManager.FindByEmailAsync(config["AdminCredentials:Email"]).Result;
-
-                if (admin == null)
-                {
-                    admin = new IdentityUser()
-                    {
-                        UserName = config["AdminCredentials:Email"],
-                        Email = config["AdminCredentials:Email"],
-                        EmailConfirmed = true
-                    };
-
-                    result = userManager.CreateAsync(admin, config["AdminCredentials:Password"]).Result;
-                    if (result.Succeeded)
-                    {
-                        result = userManager.AddToRoleAsync(admin, roleName).Result;
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception("Error adding administrator");
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
