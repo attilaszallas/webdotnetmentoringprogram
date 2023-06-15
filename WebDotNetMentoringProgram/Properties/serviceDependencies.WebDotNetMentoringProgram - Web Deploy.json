@@ -10,6 +10,13 @@
       "type": "mssql.azure",
       "connectionId": "ConnectionStrings:WebDotNetMentoringProgramContext",
       "dynamicId": null
+    },
+    "mssql2": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/webdotnetmentoringprogramdbserver/databases/Identity",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:ApplicationDbContextConnection",
+      "dynamicId": null
     }
   }
 }
