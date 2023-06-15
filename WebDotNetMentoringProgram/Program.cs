@@ -130,8 +130,6 @@ app.Logger.LogInformation($"Additional information: current configuration values
 
 app.UseMiddleware<ImageFileCacheMiddleWare>();
 
-PredefinedUsers.CreateAdminUser(app);
+//PredefinedUsers.CreateAdminUser(app);
 
 app.Run();
-
-// please move this to extension method
