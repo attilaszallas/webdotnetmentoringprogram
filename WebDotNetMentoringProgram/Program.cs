@@ -81,10 +81,11 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.File(builder.Configuration["Logging:LogFilePath"]));
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-});
+
+// builder.Services.AddSwaggerGen(c =>
+// {
+//    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+// });
 
 var app = builder.Build();
 app.Logger.LogInformation("Application build is ready.");
@@ -100,7 +101,7 @@ else
 {
     // app.UseExceptionHandler("/Home/CustomError");
 
-    app.UseSwagger();
+    // app.UseSwagger();
     app.UseSwaggerUI();
 }
 
@@ -130,6 +131,6 @@ app.Logger.LogInformation($"Additional information: current configuration values
 
 app.UseMiddleware<ImageFileCacheMiddleWare>();
 
-//PredefinedUsers.CreateAdminUser(app);
+PredefinedUsers.CreateAdminUser(app);
 
 app.Run();
