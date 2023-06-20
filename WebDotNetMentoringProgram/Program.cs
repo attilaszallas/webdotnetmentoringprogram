@@ -95,6 +95,8 @@ builder.Services.AddEndpointsApiExplorer();
 //    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 // });
 
+builder.Services.AddWebOptimizer();
+
 var app = builder.Build();
 app.Logger.LogInformation("Application build is ready.");
 
@@ -119,6 +121,7 @@ else
 }
 
 // app.UseHttpsRedirection();
+app.UseWebOptimizer();
 app.UseStaticFiles();
 
 app.Logger.LogInformation("Use Routing");
