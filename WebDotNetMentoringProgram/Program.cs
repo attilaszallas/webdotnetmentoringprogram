@@ -44,7 +44,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddRazorPages().AddMvcOptions(options =>
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation().AddMvcOptions(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
                   .RequireAuthenticatedUser()
