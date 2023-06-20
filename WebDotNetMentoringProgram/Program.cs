@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -15,6 +16,7 @@ using WebDotNetMentoringProgram.MiddleWares;
 using WebDotNetMentoringProgram.Models;
 using WebDotNetMentoringProgram.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Net;
 
 var AllowSpecificOrigins = "_allowSpecificOrigins";
 
@@ -74,6 +76,12 @@ builder.Services.AddCors(options =>
                       });
 });
 
+// Configure forwarded headers
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse("10.0.0.100"));
+});
+
 builder.Services.AddScoped<LoggingResponseHeaderFilterService>();
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -89,6 +97,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 app.Logger.LogInformation("Application build is ready.");
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
